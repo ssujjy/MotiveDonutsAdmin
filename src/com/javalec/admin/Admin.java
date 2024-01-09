@@ -14,6 +14,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import com.javalec.base.Main;
+import com.javalec.common.ShareVar;
 import com.javalec.function.AdminDAO;
 import com.javalec.model.ProductDTO;
 
@@ -380,13 +382,27 @@ public class Admin extends JFrame {
 		Admin admin = new Admin();
 		admin.main(null);
 	}
-
+//	private void homeScreen() {
+//		this.frame.setVisible(false); // 현재화면 끄고
+//		Main window = new Main();
+//		window.frame.setVisible(true); // 홈 화면 키기
+//	}
+//	private void homeScreen() {
+//		// 로그인 성공시
+//		ShareVar.loginID = id1;
+//		frame.setVisible(false);
+//		Product_Search ps = new Product_Search();
+//		ps.main(null);
+//	}
 	// Table에서 Row를 click했을 경우
 	private void tableClick() {
 		int i = innerProductTable.getSelectedRow();
 		String tkSequence = (String) innerProductTable.getValueAt(i, 0);
 		int wkSequence = Integer.parseInt(tkSequence);
-
+		
+//		frame.setVisible(false);
+//		Product_Search ps = new Product_Search();
+//		ps.main(null);
 //			Dao dao = new Dao(wkSequence);
 //			Dto dto = dao.tableClick();
 //			
