@@ -7,7 +7,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import com.javalec.admin.Sales;
 import com.javalec.common.ShareVar;
 import com.javalec.function.AdminDAO;
 
@@ -168,8 +167,8 @@ public class Main {
 				ShareVar.loginID = id; 
 				frame.setVisible(false);
 //				frame.dispose();
-				Sales sales = new Sales();
-				sales.setVisible(true);
+//				Sales sales = new Sales();
+//				sales.setVisible(true);
 			} else {
 				// 로그인 실패 시
 				JOptionPane.showMessageDialog(null, "정보가 잘못 입력되었습니다. 다시 입력하여 주세요.");
