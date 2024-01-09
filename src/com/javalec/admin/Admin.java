@@ -21,6 +21,7 @@ import javax.swing.event.ChangeEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
@@ -32,6 +33,7 @@ import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.ListSelectionModel;
+import javax.swing.JLabel;
 
 public class Admin extends JFrame {
 
@@ -44,6 +46,7 @@ public class Admin extends JFrame {
 	private final DefaultTableModel outerSalesTable = new DefaultTableModel();
 	private final DefaultTableModel outerProductTable = new DefaultTableModel();
 	private final DefaultTableModel outerMemberTable = new DefaultTableModel();
+	private DecimalFormat df = new DecimalFormat("###,###,###,###");
 	private JPanel tabStock;
 	private JComboBox cbProduct;
 	private JTextField tfProduct;
@@ -51,6 +54,8 @@ public class Admin extends JFrame {
 	private JScrollPane scrollPane;
 	private JTable innerProductTable;
 	private ArrayList<ProductDTO> dtoList = null;
+	private JLabel lblNewLabel;
+	private JLabel lblNewLabel_1;
 	/**
 	 * Launch the application.
 	 */
@@ -90,7 +95,7 @@ public class Admin extends JFrame {
 			}
 		});
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 984, 554);
+		setBounds(100, 100, 985, 555);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -151,6 +156,8 @@ public class Admin extends JFrame {
 			tabProduct.add(getTfProduct());
 			tabProduct.add(getBtnSearchProduct());
 			tabProduct.add(getScrollPane());
+			tabProduct.add(getLblNewLabel());
+			tabProduct.add(getLblNewLabel_1());
 		}
 		return tabProduct;
 	}
@@ -171,14 +178,14 @@ public class Admin extends JFrame {
 	private JComboBox getCbProduct() {
 		if (cbProduct == null) {
 			cbProduct = new JComboBox();
-			cbProduct.setBounds(40, 23, 159, 23);
+			cbProduct.setBounds(110, 19, 159, 23);
 		}
 		return cbProduct;
 	}
 	private JTextField getTfProduct() {
 		if (tfProduct == null) {
 			tfProduct = new JTextField();
-			tfProduct.setBounds(211, 24, 288, 21);
+			tfProduct.setBounds(335, 20, 159, 21);
 			tfProduct.setColumns(10);
 		}
 		return tfProduct;
@@ -188,10 +195,11 @@ public class Admin extends JFrame {
 			btnSearchProduct = new JButton("검색");
 			btnSearchProduct.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					
+					tableProductInit();
+					searchProductAction(); 
 				}
 			});
-			btnSearchProduct.setBounds(511, 23, 97, 23);
+			btnSearchProduct.setBounds(506, 19, 97, 23);
 		}
 		return btnSearchProduct;
 	}
@@ -216,6 +224,20 @@ public class Admin extends JFrame {
 			
 		}
 		return innerProductTable;
+	}
+	private JLabel getLblNewLabel() {
+		if (lblNewLabel == null) {
+			lblNewLabel = new JLabel("상품종류 : ");
+			lblNewLabel.setBounds(51, 23, 69, 15);
+		}
+		return lblNewLabel;
+	}
+	private JLabel getLblNewLabel_1() {
+		if (lblNewLabel_1 == null) {
+			lblNewLabel_1 = new JLabel("상품명 : ");
+			lblNewLabel_1.setBounds(281, 23, 69, 15);
+		}
+		return lblNewLabel_1;
 	} // 여기까지 상품관리 화면.
 	
 	// [상품관리] ===== Function ========================
@@ -239,7 +261,7 @@ public class Admin extends JFrame {
 		// 상품명
 		colNo = 1;
 		col = innerProductTable.getColumnModel().getColumn(colNo);
-		width = 50;
+		width = 150;
 		col.setPreferredWidth(width);
 		
 		// 상품가격
@@ -252,13 +274,13 @@ public class Admin extends JFrame {
 		// 설명
 		colNo = 3;
 		col = innerProductTable.getColumnModel().getColumn(colNo);
-		width = 80;
+		width = 350;
 		col.setPreferredWidth(width);
 		
 		// 분류
 		colNo = 4;
 		col = innerProductTable.getColumnModel().getColumn(colNo);
-		width = 150;
+		width = 50;
 		col.setPreferredWidth(width);
 		
 //		// 영양정보
@@ -303,15 +325,17 @@ public class Admin extends JFrame {
 	private void searchProductAction() {
 		String item ="";
 //		String item = cbProduct.getSelectedItem();
-		System.out.println(cbProduct.getSelectedItem());
+		System.out.println(cbProduct.getSelectedItem());		
+		String val = tfProduct.getText();
+		
 		AdminDAO dao = new AdminDAO();
-		dtoList = dao.selectProductListByItem(item);
+		dtoList = dao.selectProductListByItem(item, val);
 
 		int listCount = dtoList.size();
 		for(int i=0; i<listCount; i++) {
 //			proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
 			String proname = dtoList.get(i).getProname();
-			int sellprice = dtoList.get(i).getSellprice();
+			String sellprice = df.format(dtoList.get(i).getSellprice())+"원";
 			String detail = dtoList.get(i).getDetail();
 //			String nutritional = dtoList.get(i).getNutritional();
 //			String ingredient = dtoList.get(i).getIngredient();
@@ -319,39 +343,58 @@ public class Admin extends JFrame {
 			String wkItem = dtoList.get(i).getItem();
 			ImageIcon icon = new ImageIcon("./"+imagename);
 			Image img = icon.getImage();
-			Image changeImg = img.getScaledInstance(50,50, Image.SCALE_SMOOTH);
+			Image changeImg = img.getScaledInstance(100,100, Image.SCALE_SMOOTH);
 			ImageIcon changeIcon = new ImageIcon(changeImg);
 			
 			Object[] tmpData = {changeIcon, proname, sellprice, detail, wkItem};
 			outerProductTable.addRow(tmpData);
 		}
 		
-//		// Table Column별 정렬하기.
-//		// Table Column(Cell) 가운데 정렬
-//		DefaultTableCellRenderer center = new DefaultTableCellRenderer();
-//		center.setHorizontalAlignment(SwingConstants.CENTER);
-//		
-//		TableColumnModel tcm = innerTable.getColumnModel();
-//		
-//		// 특정 Column(Cell) 가운데 정렬
-//		tcm.getColumn(0).setCellRenderer(center);
-//		tcm.getColumn(1).setCellRenderer(center);
-//		tcm.getColumn(2).setCellRenderer(center);
-//		tcm.getColumn(3).setCellRenderer(center);
-//		
-//		// Table Column(Cell) 우측 정렬
-//		DefaultTableCellRenderer right = new DefaultTableCellRenderer();
-//		right.setHorizontalAlignment(SwingConstants.RIGHT);
-//		
-//		// 특정 Column(Cell) 우측 정렬
-//		tcm.getColumn(4).setCellRenderer(right);
-//		tcm.getColumn(5).setCellRenderer(center);		
-//		
+		// Table Column별 정렬하기.
+		// Table Column(Cell) 가운데 정렬
+		DefaultTableCellRenderer center = new DefaultTableCellRenderer();
+		center.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		// Table Column(Cell) 우측 정렬
+		DefaultTableCellRenderer right = new DefaultTableCellRenderer();
+		right.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		TableColumnModel tcm = innerProductTable.getColumnModel();
+		
+		// 특정 Column(Cell) 가운데 정렬
+		tcm.getColumn(1).setCellRenderer(center);
+		tcm.getColumn(2).setCellRenderer(right);
+		tcm.getColumn(3).setCellRenderer(center);
+		tcm.getColumn(4).setCellRenderer(center);
+		
 	}	// End of searchAction()
 	private void closingAction() {
 		for(int index=0; index < dtoList.size(); index++) {
 			File file = new File("./" + dtoList.get(index).getImagename());
 			file.delete();
 		}
+	}
+	
+	private void addProduct() {
+		this.setVisible(false);
+		Admin admin = new Admin();
+		admin.main(null);
+	}
+
+	// Table에서 Row를 click했을 경우
+	private void tableClick() {
+		int i = innerProductTable.getSelectedRow();
+		String tkSequence = (String) innerProductTable.getValueAt(i, 0);
+		int wkSequence = Integer.parseInt(tkSequence);
+
+//			Dao dao = new Dao(wkSequence);
+//			Dto dto = dao.tableClick();
+//			
+//			tfSeqNo.setText(Integer.toString(dto.getSeqno()));
+//			tfName.setText(dto.getName());
+//			tfTelno.setText(dto.getTelno());
+//			tfAddress.setText(dto.getAddress());
+//			tfEmail.setText(dto.getEmail());
+//			tfRelation.setText(dto.getRelation());
 	}
 }

@@ -56,7 +56,7 @@ public class AdminDAO {
 	
 	// ========= [ 상품관리 Tab ] ========
 	// 카테고리별로 상품 목록 가져오기 
-	public ArrayList<ProductDTO> selectProductListByItem(String item){
+	public ArrayList<ProductDTO> selectProductListByItem(String item, String val){
 		
 		ArrayList<ProductDTO> dtoList = new ArrayList<ProductDTO>();
 		String whereDefault = "SELECT p.proname, p.sellprice, p.detail, p.nutritional, p.ingredient, p.imagename, p.image, r.item"
@@ -65,6 +65,9 @@ public class AdminDAO {
 		String where = "";
 		if(item!=null && !(item.equals(""))) {
 			where = " AND r.item = '"+item+"'";
+		}
+		if(val!=null && !(val.equals(""))) {
+			where = " AND p.proname like '%"+val+"%'";
 		}
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
