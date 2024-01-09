@@ -146,7 +146,7 @@ public class ProductAdd extends JFrame {
 	private JTextField getTfProductName() {
 		if (tfProductName == null) {
 			tfProductName = new JTextField();
-			tfProductName.setBounds(117, 63, 150, 21);
+			tfProductName.setBounds(117, 63, 432, 21);
 			tfProductName.setColumns(10);
 		}
 		return tfProductName;
@@ -155,28 +155,28 @@ public class ProductAdd extends JFrame {
 		if (tfProductPrice == null) {
 			tfProductPrice = new JTextField();
 			tfProductPrice.setColumns(10);
-			tfProductPrice.setBounds(117, 113, 150, 21);
+			tfProductPrice.setBounds(117, 113, 432, 21);
 		}
 		return tfProductPrice;
 	}
 	private JTextArea getTaDetail() {
 		if (taDetail == null) {
 			taDetail = new JTextArea();
-			taDetail.setBounds(117, 156, 264, 47);
+			taDetail.setBounds(117, 156, 432, 47);
 		}
 		return taDetail;
 	}
 	private JTextArea getTaNutritional() {
 		if (taNutritional == null) {
 			taNutritional = new JTextArea();
-			taNutritional.setBounds(117, 223, 264, 47);
+			taNutritional.setBounds(117, 223, 432, 47);
 		}
 		return taNutritional;
 	}
 	private JTextArea getTaIngredient() {
 		if (taIngredient == null) {
 			taIngredient = new JTextArea();
-			taIngredient.setBounds(117, 287, 264, 47);
+			taIngredient.setBounds(117, 287, 432, 47);
 		}
 		return taIngredient;
 	}
