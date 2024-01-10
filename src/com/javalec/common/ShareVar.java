@@ -6,4 +6,5 @@ public class ShareVar {
 	public static String dbPass = "qwer1234";
 	public static int filename = 0;
 	public static String loginID = "";
+	public static String proname = "";
 }

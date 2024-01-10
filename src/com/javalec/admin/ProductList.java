@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import com.javalec.common.ShareVar;
 import com.javalec.function.AdminDAO;
 import com.javalec.function.ProductDAO;
 import com.javalec.model.ProductDTO;
@@ -59,6 +60,7 @@ public class ProductList extends JFrame {
 	private ArrayList<ProductDTO> dtoList = null;
 	private JLabel lblNewLabel;
 	private JLabel lblNewLabel_1;
+	private JButton btnAddNewProduct;
 	/**
 	 * Launch the application.
 	 */
@@ -164,6 +166,7 @@ public class ProductList extends JFrame {
 			tabProduct.add(getScrollPane());
 			tabProduct.add(getLblNewLabel());
 			tabProduct.add(getLblNewLabel_1());
+			tabProduct.add(getBtnAddNewProduct());
 		}
 		return tabProduct;
 	}
@@ -250,7 +253,19 @@ public class ProductList extends JFrame {
 			lblNewLabel_1.setBounds(281, 23, 69, 15);
 		}
 		return lblNewLabel_1;
-	} // 여기까지 상품관리 화면.
+	} 
+	private JButton getBtnAddNewProduct() {
+		if (btnAddNewProduct == null) {
+			btnAddNewProduct = new JButton("새상품 등록");
+			btnAddNewProduct.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoAddNewProduct();
+				}
+			});
+			btnAddNewProduct.setBounds(814, 19, 97, 23);
+		}
+		return btnAddNewProduct;
+	}// 여기까지 상품관리 화면.
 	
 	// [상품관리] ===== Function ========================
 	private void tableProductInit() { //			proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
@@ -324,8 +339,8 @@ public class ProductList extends JFrame {
 	}
 	// 카테고리 가져오기.
 	private void getComboCategory() {
-		AdminDAO adminDAO = new AdminDAO();
-		ArrayList<String> listCategory = adminDAO.selectItem();
+		ProductDAO prodcutDAO = new ProductDAO();
+		ArrayList<String> listCategory = prodcutDAO.selectItem();
 //		String[] strCategory = new listCategory.get(0);
 		
 		for(int i=0; i<listCategory.size(); i++) {
@@ -345,8 +360,8 @@ public class ProductList extends JFrame {
 		System.out.println(cbProduct.getSelectedItem());		
 		String val = tfProduct.getText();
 		
-		AdminDAO dao = new AdminDAO();
-		dtoList = dao.selectProductListByItem(item, val);
+		ProductDAO prodcutDAO = new ProductDAO();
+		dtoList = prodcutDAO.selectProductListByItem(item, val);
 
 		int listCount = dtoList.size();
 		for(int i=0; i<listCount; i++) {
@@ -391,11 +406,17 @@ public class ProductList extends JFrame {
 			file.delete();
 		}
 	}
+	// 새상품 추가로 이동.
+	private void gotoAddNewProduct(){
+		this.setVisible(false);
+		ProductAdd productAdd = new ProductAdd();
+		productAdd.main(null);
+	}
 	// 현재 창을 닫고 상품수정 페이지로 이동.
-	private void gotoUpdateProduct(String productName) {
+	private void gotoUpdateProduct() {
 		this.setVisible(false);
 		ProductUpdate productUpdate = new ProductUpdate();
-		productUpdate.proname = productName;
+//		productUpdate.proname = productName;
 		productUpdate.main(null);
 	}
 //	private void homeScreen() {
@@ -413,9 +434,9 @@ public class ProductList extends JFrame {
 	// Table에서 Row를 click했을 경우 상품 수정 메소드를 호출.
 	private void tableClick() {
 		int i = innerProductTable.getSelectedRow();
-		String p_productName = (String) innerProductTable.getValueAt(i, 1);	// 테이블에서 상품명 가져오기.
-		
-		gotoUpdateProduct(p_productName);
+//		String p_productName = (String) innerProductTable.getValueAt(i, 1);	// 테이블에서 상품명 가져오기.
+		ShareVar.proname = (String) innerProductTable.getValueAt(i, 1);	// 테이블에서 상품명 가져오기.
+		gotoUpdateProduct();
 		
 //		ProductDAO productDAO = new ProductDAO(p_productName);
 //		ProductDTO productDTO = productDAO.tableClick();
@@ -427,4 +448,5 @@ public class ProductList extends JFrame {
 //		tfEmail.setText(dto.getEmail());
 //		tfRelation.setText(dto.getRelation());
 	}
+
 }

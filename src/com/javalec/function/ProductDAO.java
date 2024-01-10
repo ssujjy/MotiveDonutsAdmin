@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import com.javalec.common.ShareVar;
 import com.javalec.model.ProductDTO;
@@ -56,6 +57,87 @@ public class ProductDAO {
 
 
 	// Method
+	// ========= [ 상품관리 Tab ] ========
+	// 카테고리별로 상품 목록 가져오기 
+	public ArrayList<ProductDTO> selectProductListByItem(String item, String val){
+		
+		ArrayList<ProductDTO> dtoList = new ArrayList<ProductDTO>();
+		String whereDefault = "SELECT p.proname, p.sellprice, p.detail, p.nutritional, p.ingredient, p.imagename, p.image, r.item"
+				+ " FROM register r, product p"
+				+ " WHERE r.proname = p.proname";
+		String where = "";
+		if(item!=null && !(item.equals(""))) {
+			where = " AND r.item = '"+item+"'";
+		}
+		if(val!=null && !(val.equals(""))) {
+			where = " AND p.proname like '%"+val+"%'";
+		}
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
+			Statement stmt_mysql = conn_mysql.createStatement();
+			System.out.println(whereDefault+where);
+			ResultSet rs = stmt_mysql.executeQuery(whereDefault+where);
+			while(rs.next()) {	
+				String proname = rs.getString(1);
+				int sellprice = rs.getInt(2);
+				String detail = rs.getString(3);
+				String nutritional = rs.getString(4);
+				String ingredient = rs.getString(5);
+				String imagename = rs.getString(6);
+				
+				// File
+            	File file = new File("./" + imagename);
+				FileOutputStream output = new FileOutputStream(file);
+				InputStream image = rs.getBinaryStream(7);
+				byte[] buffer = new byte[1024];
+				while(image.read(buffer) > 0 ) {
+					output.write(buffer);
+				}
+				
+				String wItem = rs.getString(8);
+				
+				
+				
+				ProductDTO productDto = new ProductDTO(proname, sellprice, detail, nutritional, ingredient, imagename, wItem);
+				dtoList.add(productDto);
+				
+			}
+			conn_mysql.close();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return dtoList;
+	}	// End of selectProductListByItem
+	
+	
+	// 콤보박스에 사용할 카테고리 가져오기.
+	public ArrayList<String> selectItem(){
+		ArrayList<String> itemList = new ArrayList<String>();
+		String whereDefault = "SELECT item FROM category";
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
+			Statement stmt_mysql = conn_mysql.createStatement();
+			
+			ResultSet rs = stmt_mysql.executeQuery(whereDefault);
+			
+			while(rs.next()) {	
+				String wItem = rs.getString(1);
+				itemList.add(wItem);
+				
+			}
+			conn_mysql.close();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return itemList;
+	}	// End of selectProductListByItem
+	
 	// 상품등록이 완료되었는지 여부를 리턴해주는 메소드
 	public boolean insertProductAction() {
 		PreparedStatement ps = null; 
@@ -106,7 +188,7 @@ public class ProductDAO {
 					String wIngredient = rs.getString(5);
 					String wImagename = rs.getString(7);
 //					String wItem = rs.getString(8);
-					String wItem = "";
+					String wItem = "도넛";
 					
 					// File  그림 파일을 하나만들어준다.
 					File file = new File(wImagename);

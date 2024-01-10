@@ -1,6 +1,7 @@
 package com.javalec.admin;
 
 import java.awt.EventQueue;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import com.javalec.common.ShareVar;
 import com.javalec.function.AdminDAO;
 import com.javalec.function.ProductDAO;
 import com.javalec.model.ProductDTO;
@@ -53,7 +55,7 @@ public class ProductUpdate extends JFrame {
 	private JTextField tfImage;
 	private JButton btnImage;
 	private JButton btnUpdate;
-	public String proname;
+//	public String proname;
 
 	/**
 	 * Launch the application.
@@ -71,6 +73,10 @@ public class ProductUpdate extends JFrame {
 		});
 	}
 
+//	public ProductUpdate(String proname) throws HeadlessException {
+//		super();
+//		this.proname = proname;
+//	}
 	/**
 	 * Create the frame.
 	 */
@@ -85,7 +91,7 @@ public class ProductUpdate extends JFrame {
 			public void windowOpened(WindowEvent e) {
 				removeComboCategory();
 				getComboCategory();
-				loadDetailProduct(proname);
+				loadDetailProduct(ShareVar.proname);
 			}
 		});
 		setTitle("상품수정");
@@ -98,6 +104,8 @@ public class ProductUpdate extends JFrame {
 		contentPane.setLayout(null);
 		contentPane.add(getTabbedPane());
 	}
+	
+
 	private JTabbedPane getTabbedPane() {
 		if (tabbedPane == null) {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
@@ -260,8 +268,8 @@ public class ProductUpdate extends JFrame {
 	// === Function ======
 	// 카테고리 가져오기.
 	private void getComboCategory() {
-		AdminDAO adminDAO = new AdminDAO();
-		ArrayList<String> listCategory = adminDAO.selectItem();
+		ProductDAO prodcutDAO = new ProductDAO();
+		ArrayList<String> listCategory = prodcutDAO.selectItem();
 		
 		for(int i=0; i<listCategory.size(); i++) {
 			cbItem.addItem(listCategory.get(i));
@@ -325,6 +333,17 @@ public class ProductUpdate extends JFrame {
 		taNutritional.setText(productDTO.getNutritional());
 		taIngredient.setText(productDTO.getIngredient());
 		tfImage.setText(productDTO.getImagename());
+		// Image 처리 : fileName이 틀려야 보여주기가 가능.
+		String filePath = productDTO.getImagename();
+		ImageIcon icon = new ImageIcon("./"+filePath);
+		Image img = icon.getImage();
+		Image changeImg = img.getScaledInstance(100,100, Image.SCALE_SMOOTH);
+//		ImageIcon changeIcon = new ImageIcon(changeImg);
+		lblImage.setIcon(new ImageIcon(changeImg));	
+		lblImage.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		File file = new File(filePath);
+		file.delete();
 	}
 	private void updateProduct() {
 		int i_chk = insertFieldCheck();
@@ -351,7 +370,8 @@ public class ProductUpdate extends JFrame {
 			boolean result = productDAO.updateProductAction();
 			
 			if(result == true) {
-				JOptionPane.showMessageDialog(null,  tfProductName.getText() + " 삼품이 수정되었습니다.");
+				JOptionPane.showMessageDialog(null,  tfProductName.getText() + " 상품이 수정되었습니다.");
+				gotoProductList();
 			}else {
 				JOptionPane.showMessageDialog(null, "입력중 문제가 발생했습니다.");
 			}
@@ -360,6 +380,12 @@ public class ProductUpdate extends JFrame {
 		}
 	}	//End of clearColumn()
 	
+	// 상풍목록으로 이동.
+	private void gotoProductList(){
+		this.setVisible(false);
+		ProductList productList = new ProductList();
+		productList.main(null);
+	}
 	
 	// -----------------[[[ File ]]]]]]---------------------------------------------------
 

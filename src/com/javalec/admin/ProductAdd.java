@@ -74,9 +74,17 @@ public class ProductAdd extends JFrame {
 	 */
 	public ProductAdd() {
 		addWindowListener(new WindowAdapter() {
+//			@Override
+//			public void windowActivated(WindowEvent e) {
+//				removeComboCategory();
+//				getComboCategory();
+//				clearColumn();
+//			}
 			@Override
-			public void windowActivated(WindowEvent e) {
+			public void windowOpened(WindowEvent e) {
+				removeComboCategory();
 				getComboCategory();
+				clearColumn();
 			}
 		});
 		setTitle("상품등록");
@@ -251,11 +259,18 @@ public class ProductAdd extends JFrame {
 	// === Function ======
 	// 카테고리 가져오기.
 	private void getComboCategory() {
-		AdminDAO adminDAO = new AdminDAO();
-		ArrayList<String> listCategory = adminDAO.selectItem();
+		ProductDAO productDAO = new ProductDAO();
+		ArrayList<String> listCategory = productDAO.selectItem();
 		
 		for(int i=0; i<listCategory.size(); i++) {
 			cbItem.addItem(listCategory.get(i));
+		}
+	}
+	// 카테고리 초기화.
+	private void removeComboCategory() {
+		int cntCategory = cbItem.getItemCount();
+		for(int i=0; i<cntCategory; i++) {
+			cbItem.remove(i);
 		}
 	}
 	// 컬럼 내용 지우기.
@@ -331,12 +346,18 @@ public class ProductAdd extends JFrame {
 		boolean result = productDAO.insertProductAction();
 		
 		if(result == true) {
-			JOptionPane.showMessageDialog(null,  tfProductName.getText() + " 삼품이 등록되었습니다.");
+			JOptionPane.showMessageDialog(null,  tfProductName.getText() + " 상품이 등록되었습니다.");
+			gotoProductList();
 		}else {
 			JOptionPane.showMessageDialog(null, "입력중 문제가 발생했습니다.");
 		}
 	}	//End of clearColumn()
-	
+	// 상풍목록으로 이동.
+	private void gotoProductList(){
+		this.setVisible(false);
+		ProductList productList = new ProductList();
+		productList.main(null);
+	}
 	// -----------------[[[ File ]]]]]]---------------------------------------------------
 
 	private void filePath() {
