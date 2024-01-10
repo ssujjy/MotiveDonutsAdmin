@@ -113,7 +113,6 @@ public class AdminDAO {
 	// 콤보박스에 사용할 카테고리 가져오기.
 	public ArrayList<String> selectItem(){
 		ArrayList<String> itemList = new ArrayList<String>();
-//		String[] strCategory;
 		String whereDefault = "SELECT item FROM category";
 		
 		try {
@@ -133,7 +132,6 @@ public class AdminDAO {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		System.out.println(itemList);
 		return itemList;
 	}	// End of selectProductListByItem
 	

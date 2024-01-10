@@ -13,7 +13,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.javalec.common.ShareVar;
 import com.javalec.function.AdminDAO;
-import com.javalec.function.Dao;
 import com.javalec.function.ProductDAO;
 
 import javax.swing.JTabbedPane;
@@ -28,6 +27,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class ProductAdd extends JFrame {
 
@@ -72,6 +73,12 @@ public class ProductAdd extends JFrame {
 	 * Create the frame.
 	 */
 	public ProductAdd() {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowActivated(WindowEvent e) {
+				getComboCategory();
+			}
+		});
 		setTitle("상품등록");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 985, 555);
@@ -202,7 +209,8 @@ public class ProductAdd extends JFrame {
 	private JLabel getLblImage() {
 		if (lblImage == null) {
 			lblImage = new JLabel("Image");
-			lblImage.setBounds(32, 353, 106, 83);
+			lblImage.setHorizontalAlignment(SwingConstants.CENTER);
+			lblImage.setBounds(12, 353, 96, 83);
 		}
 		return lblImage;
 	}
@@ -210,15 +218,20 @@ public class ProductAdd extends JFrame {
 		if (tfImage == null) {
 			tfImage = new JTextField();
 			tfImage.setEditable(false);
-			tfImage.setBounds(117, 384, 230, 21);
+			tfImage.setBounds(117, 384, 288, 21);
 			tfImage.setColumns(10);
 		}
 		return tfImage;
 	}
 	private JButton getBtnImage() {
 		if (btnImage == null) {
-			btnImage = new JButton("FIle");
-			btnImage.setBounds(366, 383, 97, 23);
+			btnImage = new JButton("이미지 추가");
+			btnImage.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					filePath();
+				}
+			});
+			btnImage.setBounds(417, 383, 132, 23);
 		}
 		return btnImage;
 	}
@@ -240,10 +253,9 @@ public class ProductAdd extends JFrame {
 	private void getComboCategory() {
 		AdminDAO adminDAO = new AdminDAO();
 		ArrayList<String> listCategory = adminDAO.selectItem();
-//		String[] strCategory = new listCategory.get(0);
 		
 		for(int i=0; i<listCategory.size(); i++) {
-			cbItem.addItem(listCategory);
+			cbItem.addItem(listCategory.get(i));
 		}
 	}
 	
@@ -277,23 +289,24 @@ public class ProductAdd extends JFrame {
 		}
 		return i;
 	}//insertFieldCheck
-	// 컬럼 내용 지우기.
-	private void clearColumn() {
-		tfProductName.setText("");
-		tfProductPrice.setText("");
-		taDetail.setText("");
-		taNutritional.setText("");
-		taIngredient.setText("");
-		tfImage.setText("");
-		lblImage.setIcon(null);
-	}
+	
 	private void addNewProduct() {
+		int i_chk = insertFieldCheck();
+		if(i_chk == 0) {
+			insertNewProduct();
+		}else {
+			JOptionPane.showMessageDialog(null, "데이터를 확인하세요");
+		}
+	}	//End of clearColumn()
+	
+	private void insertNewProduct() {
 		String productName = tfProductName.getText().trim();
-		String productPrice = tfProductPrice.getText().trim();
+		int productPrice = Integer.parseInt(tfProductPrice.getText().trim().replace(",", ""));
 		String detail = taDetail.getText().trim();
 		String nutritional = taNutritional.getText().trim();
 		String ingredient = taIngredient.getText().trim();
 		String imageName = tfImage.getText().trim();
+		String item = (String) cbItem.getSelectedItem();
 		
 		// Image File
 		FileInputStream input = null;
@@ -306,10 +319,10 @@ public class ProductAdd extends JFrame {
 		}
 		// proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
 		ProductDAO productDAO = new ProductDAO(productName, productPrice, detail, nutritional, ingredient, input, imageName, item);
-		boolean result = dao.insertAction();
+		boolean result = productDAO.insertProductAction();
 		
 		if(result == true) {
-			JOptionPane.showMessageDialog(null,  tfName.getText() + "님의 정보가 입력 되었습니다.");
+			JOptionPane.showMessageDialog(null,  tfProductName.getText() + " 삼품이 등록되었습니다.");
 		}else {
 			JOptionPane.showMessageDialog(null, "입력중 문제가 발생했습니다.");
 		}

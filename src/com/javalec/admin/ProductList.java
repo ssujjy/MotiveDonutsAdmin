@@ -322,8 +322,7 @@ public class ProductList extends JFrame {
 	}
 	// 상품관리 테이블 불러오기.
 	private void searchProductAction() {
-		String item ="";
-//		String item = cbProduct.getSelectedItem();
+		String item = (String) cbProduct.getSelectedItem();
 		System.out.println(cbProduct.getSelectedItem());		
 		String val = tfProduct.getText();
 		
