@@ -262,7 +262,7 @@ public class ProductList extends JFrame {
 					gotoAddNewProduct();
 				}
 			});
-			btnAddNewProduct.setBounds(814, 19, 97, 23);
+			btnAddNewProduct.setBounds(793, 19, 118, 23);
 		}
 		return btnAddNewProduct;
 	}// 여기까지 상품관리 화면.
