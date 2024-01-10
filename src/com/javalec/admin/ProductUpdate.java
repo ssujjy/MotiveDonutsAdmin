@@ -14,6 +14,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.javalec.function.AdminDAO;
 import com.javalec.function.ProductDAO;
+import com.javalec.model.ProductDTO;
 
 import javax.swing.JTabbedPane;
 import javax.swing.JComboBox;
@@ -30,12 +31,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class ProductAdd extends JFrame {
+public class ProductUpdate extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTabbedPane tabbedPane;
-	private JPanel AddNewProduct;
+	private JPanel UpdateProduct;
 	private JComboBox cbItem;
 	private JLabel lblNewLabel;
 	private JLabel lblNewLabel_1;
@@ -51,7 +52,8 @@ public class ProductAdd extends JFrame {
 	private JLabel lblImage;
 	private JTextField tfImage;
 	private JButton btnImage;
-	private JButton btnSave;
+	private JButton btnUpdate;
+	public String proname;
 
 	/**
 	 * Launch the application.
@@ -60,7 +62,7 @@ public class ProductAdd extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ProductAdd frame = new ProductAdd();
+					ProductUpdate frame = new ProductUpdate();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -72,14 +74,21 @@ public class ProductAdd extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ProductAdd() {
+	public ProductUpdate() {
 		addWindowListener(new WindowAdapter() {
+//			@Override
+//			public void windowActivated(WindowEvent e) {
+//				removeComboCategory();
+//				getComboCategory();
+//			}
 			@Override
-			public void windowActivated(WindowEvent e) {
+			public void windowOpened(WindowEvent e) {
+				removeComboCategory();
 				getComboCategory();
+				loadDetailProduct(proname);
 			}
 		});
-		setTitle("상품등록");
+		setTitle("상품수정");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 985, 555);
 		contentPane = new JPanel();
@@ -93,32 +102,32 @@ public class ProductAdd extends JFrame {
 		if (tabbedPane == null) {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			tabbedPane.setBounds(12, 10, 945, 493);
-			tabbedPane.addTab("상품등록", null, getAddNewProduct(), null);
+			tabbedPane.addTab("상품수정", null, getUpdateProduct(), null);
 		}
 		return tabbedPane;
 	}
-	private JPanel getAddNewProduct() {
-		if (AddNewProduct == null) {
-			AddNewProduct = new JPanel();
-			AddNewProduct.setLayout(null);
-			AddNewProduct.add(getCbItem());
-			AddNewProduct.add(getLblNewLabel());
-			AddNewProduct.add(getLblNewLabel_1());
-			AddNewProduct.add(getLblNewLabel_1_1());
-			AddNewProduct.add(getLblNewLabel_1_1_1());
-			AddNewProduct.add(getLblNewLabel_1_1_1_1());
-			AddNewProduct.add(getLblNewLabel_1_1_1_1_1());
-			AddNewProduct.add(getTfProductName());
-			AddNewProduct.add(getTfProductPrice());
-			AddNewProduct.add(getTaDetail());
-			AddNewProduct.add(getTaNutritional());
-			AddNewProduct.add(getTaIngredient());
-			AddNewProduct.add(getLblImage());
-			AddNewProduct.add(getTfImage());
-			AddNewProduct.add(getBtnImage());
-			AddNewProduct.add(getBtnSave());
+	private JPanel getUpdateProduct() {
+		if (UpdateProduct == null) {
+			UpdateProduct = new JPanel();
+			UpdateProduct.setLayout(null);
+			UpdateProduct.add(getCbItem());
+			UpdateProduct.add(getLblNewLabel());
+			UpdateProduct.add(getLblNewLabel_1());
+			UpdateProduct.add(getLblNewLabel_1_1());
+			UpdateProduct.add(getLblNewLabel_1_1_1());
+			UpdateProduct.add(getLblNewLabel_1_1_1_1());
+			UpdateProduct.add(getLblNewLabel_1_1_1_1_1());
+			UpdateProduct.add(getTfProductName());
+			UpdateProduct.add(getTfProductPrice());
+			UpdateProduct.add(getTaDetail());
+			UpdateProduct.add(getTaNutritional());
+			UpdateProduct.add(getTaIngredient());
+			UpdateProduct.add(getLblImage());
+			UpdateProduct.add(getTfImage());
+			UpdateProduct.add(getBtnImage());
+			UpdateProduct.add(getBtnUpdate());
 		}
-		return AddNewProduct;
+		return UpdateProduct;
 	}
 	private JComboBox getCbItem() {
 		if (cbItem == null) {
@@ -235,17 +244,17 @@ public class ProductAdd extends JFrame {
 		}
 		return btnImage;
 	}
-	private JButton getBtnSave() {
-		if (btnSave == null) {
-			btnSave = new JButton("등록");
-			btnSave.addActionListener(new ActionListener() {
+	private JButton getBtnUpdate() {
+		if (btnUpdate == null) {
+			btnUpdate = new JButton("수정");
+			btnUpdate.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					addNewProduct();
+					updateProduct();
 				}
 			});
-			btnSave.setBounds(646, 23, 97, 23);
+			btnUpdate.setBounds(646, 23, 97, 23);
 		}
-		return btnSave;
+		return btnUpdate;
 	}
 	
 	// === Function ======
@@ -256,6 +265,13 @@ public class ProductAdd extends JFrame {
 		
 		for(int i=0; i<listCategory.size(); i++) {
 			cbItem.addItem(listCategory.get(i));
+		}
+	}
+	// 카테고리 초기화.
+	private void removeComboCategory() {
+		int cntCategory = cbItem.getItemCount();
+		for(int i=0; i<cntCategory; i++) {
+			cbItem.remove(i);
 		}
 	}
 	// 컬럼 내용 지우기.
@@ -298,44 +314,52 @@ public class ProductAdd extends JFrame {
 		}
 		return i;
 	}//insertFieldCheck
-	
-	private void addNewProduct() {
+	// 상품수정화면으로 이동시 기본정보 로드.
+	private void loadDetailProduct(String productName) {		
+		ProductDAO productDAO = new ProductDAO(productName);
+		ProductDTO productDTO = productDAO.loadDetailProduct();
+		
+		tfProductName.setText(productDTO.getProname());
+		tfProductPrice.setText(Integer.toString(productDTO.getSellprice()));
+		taDetail.setText(productDTO.getDetail());
+		taNutritional.setText(productDTO.getNutritional());
+		taIngredient.setText(productDTO.getIngredient());
+		tfImage.setText(productDTO.getImagename());
+	}
+	private void updateProduct() {
 		int i_chk = insertFieldCheck();
 		if(i_chk == 0) {
-			insertNewProduct();
+			String productName = tfProductName.getText().trim();
+			int productPrice = Integer.parseInt(tfProductPrice.getText().trim().replace(",", ""));
+			String detail = taDetail.getText().trim();
+			String nutritional = taNutritional.getText().trim();
+			String ingredient = taIngredient.getText().trim();
+			String imageName = tfImage.getText().trim();
+			String item = (String) cbItem.getSelectedItem();
+			
+			// Image File
+			FileInputStream input = null;
+			File file = new File(imageName);
+			try {
+				input = new FileInputStream(file);
+				
+			}catch(FileNotFoundException e) { 
+				e.printStackTrace();
+			}
+			// proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
+			ProductDAO productDAO = new ProductDAO(productName, productPrice, detail, nutritional, ingredient, input, imageName, item);
+			boolean result = productDAO.updateProductAction();
+			
+			if(result == true) {
+				JOptionPane.showMessageDialog(null,  tfProductName.getText() + " 삼품이 수정되었습니다.");
+			}else {
+				JOptionPane.showMessageDialog(null, "입력중 문제가 발생했습니다.");
+			}
 		}else {
 			JOptionPane.showMessageDialog(null, "데이터를 확인하세요");
 		}
 	}	//End of clearColumn()
 	
-	private void insertNewProduct() {
-		String productName = tfProductName.getText().trim();
-		int productPrice = Integer.parseInt(tfProductPrice.getText().trim().replace(",", ""));
-		String detail = taDetail.getText().trim();
-		String nutritional = taNutritional.getText().trim();
-		String ingredient = taIngredient.getText().trim();
-		String imageName = tfImage.getText().trim();
-		String item = (String) cbItem.getSelectedItem();
-		
-		// Image File
-		FileInputStream input = null;
-		File file = new File(imageName);
-		try {
-			input = new FileInputStream(file);
-			
-		}catch(FileNotFoundException e) { 
-			e.printStackTrace();
-		}
-		// proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
-		ProductDAO productDAO = new ProductDAO(productName, productPrice, detail, nutritional, ingredient, input, imageName, item);
-		boolean result = productDAO.insertProductAction();
-		
-		if(result == true) {
-			JOptionPane.showMessageDialog(null,  tfProductName.getText() + " 삼품이 등록되었습니다.");
-		}else {
-			JOptionPane.showMessageDialog(null, "입력중 문제가 발생했습니다.");
-		}
-	}	//End of clearColumn()
 	
 	// -----------------[[[ File ]]]]]]---------------------------------------------------
 

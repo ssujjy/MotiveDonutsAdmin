@@ -15,6 +15,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import com.javalec.function.AdminDAO;
+import com.javalec.function.ProductDAO;
 import com.javalec.model.ProductDTO;
 
 import javax.swing.event.ChangeEvent;
@@ -34,6 +35,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.ListSelectionModel;
 import javax.swing.JLabel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ProductList extends JFrame {
 
@@ -79,12 +82,14 @@ public class ProductList extends JFrame {
 		addWindowListener(new WindowAdapter() {
 //			@Override
 //			public void windowActivated(WindowEvent e) {
+//				removeComboCategory();
 //				getComboCategory();
 //				tableProductInit();
 //				searchProductAction();
 //			}
 			@Override
 			public void windowOpened(WindowEvent e) {
+				removeComboCategory();
 				getComboCategory();
 				tableProductInit();
 				searchProductAction();
@@ -108,36 +113,37 @@ public class ProductList extends JFrame {
 		if (tabbedPane == null) {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			tabbedPane.setBounds(12, 10, 944, 492);
-			tabbedPane.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					int selectedIndex = tabbedPane.getSelectedIndex();
-					switch(selectedIndex) {
-					case 0 : // 상품관리 tab
-//						getComboCategory();
-						tableProductInit();
-						searchProductAction(); 
-						break;
-					case 1 : // 재고관리 tab
-//						tableStockInit();
-//						searchStockAction(); 
-						break;
-					case 2 : // 매출관리 tab
-//						tableStockInit();
-//						searchStockAction(); 
-						break;	
-					case 3 : // 회원관리 tab
-//						tableMemberInit();
-//						searchMemberAction(); 
-						break;	
-					default : break;
-						
-					}
-				}
-			});
+//			tabbedPane.addChangeListener(new ChangeListener() {
+//				public void stateChanged(ChangeEvent e) {
+//					int selectedIndex = tabbedPane.getSelectedIndex();
+//					switch(selectedIndex) {
+//					case 0 : // 상품관리 tab
+////						removeComboCategory(); // 카테고리에 갯수 늘리지 않기 위해 없앰.
+////						getComboCategory();
+//						tableProductInit();
+//						searchProductAction(); 
+//						break;
+//					case 1 : // 재고관리 tab
+////						tableStockInit();
+////						searchStockAction(); 
+//						break;
+//					case 2 : // 매출관리 tab
+////						tableStockInit();
+////						searchStockAction(); 
+//						break;	
+//					case 3 : // 회원관리 tab
+////						tableMemberInit();
+////						searchMemberAction(); 
+//						break;	
+//					default : break;
+//						
+//					}
+//				}
+//			});
 			tabbedPane.addTab("상품관리", null, getTabProduct(), null);
-			tabbedPane.addTab("재고관리", null, getTabStock(), null);
-			tabbedPane.addTab("매출관리", null, getTabSales(), null);
-			tabbedPane.addTab("회원관리", null, getTabMember(), null);
+//			tabbedPane.addTab("재고관리", null, getTabStock(), null);
+//			tabbedPane.addTab("매출관리", null, getTabSales(), null);
+//			tabbedPane.addTab("회원관리", null, getTabMember(), null);
 		}
 		return tabbedPane;
 	}
@@ -218,6 +224,12 @@ public class ProductList extends JFrame {
 			        return (column == 0) ? Icon.class : Object.class; 	
 			      }
 			};
+			innerProductTable.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					tableClick();
+				}
+			});
 			innerProductTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			innerProductTable.setRowHeight(150); 	
 			innerProductTable.setModel(outerProductTable);
@@ -320,6 +332,13 @@ public class ProductList extends JFrame {
 			cbProduct.addItem(listCategory.get(i));
 		}
 	}
+	// 카테고리 초기화.
+	private void removeComboCategory() {
+		int cntCategory = cbProduct.getItemCount();
+		for(int i=0; i<cntCategory; i++) {
+			cbProduct.remove(i);
+		}
+	}
 	// 상품관리 테이블 불러오기.
 	private void searchProductAction() {
 		String item = (String) cbProduct.getSelectedItem();
@@ -372,11 +391,12 @@ public class ProductList extends JFrame {
 			file.delete();
 		}
 	}
-	
-	private void addProduct() {
+	// 현재 창을 닫고 상품수정 페이지로 이동.
+	private void gotoUpdateProduct(String productName) {
 		this.setVisible(false);
-		ProductList admin = new ProductList();
-		admin.main(null);
+		ProductUpdate productUpdate = new ProductUpdate();
+		productUpdate.proname = productName;
+		productUpdate.main(null);
 	}
 //	private void homeScreen() {
 //		this.frame.setVisible(false); // 현재화면 끄고
@@ -390,23 +410,21 @@ public class ProductList extends JFrame {
 //		Product_Search ps = new Product_Search();
 //		ps.main(null);
 //	}
-	// Table에서 Row를 click했을 경우
+	// Table에서 Row를 click했을 경우 상품 수정 메소드를 호출.
 	private void tableClick() {
 		int i = innerProductTable.getSelectedRow();
-		String tkSequence = (String) innerProductTable.getValueAt(i, 0);
-		int wkSequence = Integer.parseInt(tkSequence);
+		String p_productName = (String) innerProductTable.getValueAt(i, 1);	// 테이블에서 상품명 가져오기.
 		
-//		frame.setVisible(false);
-//		Product_Search ps = new Product_Search();
-//		ps.main(null);
-//			Dao dao = new Dao(wkSequence);
-//			Dto dto = dao.tableClick();
-//			
-//			tfSeqNo.setText(Integer.toString(dto.getSeqno()));
-//			tfName.setText(dto.getName());
-//			tfTelno.setText(dto.getTelno());
-//			tfAddress.setText(dto.getAddress());
-//			tfEmail.setText(dto.getEmail());
-//			tfRelation.setText(dto.getRelation());
+		gotoUpdateProduct(p_productName);
+		
+//		ProductDAO productDAO = new ProductDAO(p_productName);
+//		ProductDTO productDTO = productDAO.tableClick();
+		
+//		tfSeqNo.setText(Integer.toString(dto.getSeqno()));
+//		tfName.setText(dto.getName());
+//		tfTelno.setText(dto.getTelno());
+//		tfAddress.setText(dto.getAddress());
+//		tfEmail.setText(dto.getEmail());
+//		tfRelation.setText(dto.getRelation());
 	}
 }
