@@ -1,16 +1,33 @@
 package com.javalec.admin;
 
 import java.awt.EventQueue;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import com.javalec.common.ShareVar;
+import com.javalec.function.AdminDAO;
+import com.javalec.function.Dao;
+import com.javalec.function.ProductDAO;
+
 import javax.swing.JTabbedPane;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.JTextArea;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class ProductAdd extends JFrame {
 
@@ -30,9 +47,10 @@ public class ProductAdd extends JFrame {
 	private JTextArea taDetail;
 	private JTextArea taNutritional;
 	private JTextArea taIngredient;
-	private JLabel lblNewLabel_2;
+	private JLabel lblImage;
 	private JTextField tfImage;
 	private JButton btnImage;
+	private JButton btnSave;
 
 	/**
 	 * Launch the application.
@@ -88,9 +106,10 @@ public class ProductAdd extends JFrame {
 			AddNewProduct.add(getTaDetail());
 			AddNewProduct.add(getTaNutritional());
 			AddNewProduct.add(getTaIngredient());
-			AddNewProduct.add(getLblNewLabel_2());
+			AddNewProduct.add(getLblImage());
 			AddNewProduct.add(getTfImage());
 			AddNewProduct.add(getBtnImage());
+			AddNewProduct.add(getBtnSave());
 		}
 		return AddNewProduct;
 	}
@@ -180,16 +199,17 @@ public class ProductAdd extends JFrame {
 		}
 		return taIngredient;
 	}
-	private JLabel getLblNewLabel_2() {
-		if (lblNewLabel_2 == null) {
-			lblNewLabel_2 = new JLabel("Image");
-			lblNewLabel_2.setBounds(32, 353, 106, 83);
+	private JLabel getLblImage() {
+		if (lblImage == null) {
+			lblImage = new JLabel("Image");
+			lblImage.setBounds(32, 353, 106, 83);
 		}
-		return lblNewLabel_2;
+		return lblImage;
 	}
 	private JTextField getTfImage() {
 		if (tfImage == null) {
 			tfImage = new JTextField();
+			tfImage.setEditable(false);
 			tfImage.setBounds(117, 384, 230, 21);
 			tfImage.setColumns(10);
 		}
@@ -202,4 +222,115 @@ public class ProductAdd extends JFrame {
 		}
 		return btnImage;
 	}
+	private JButton getBtnSave() {
+		if (btnSave == null) {
+			btnSave = new JButton("등록");
+			btnSave.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addNewProduct();
+				}
+			});
+			btnSave.setBounds(646, 23, 97, 23);
+		}
+		return btnSave;
+	}
+	
+	// === Function ======
+	// 카테고리 가져오기.
+	private void getComboCategory() {
+		AdminDAO adminDAO = new AdminDAO();
+		ArrayList<String> listCategory = adminDAO.selectItem();
+//		String[] strCategory = new listCategory.get(0);
+		
+		for(int i=0; i<listCategory.size(); i++) {
+			cbItem.addItem(listCategory);
+		}
+	}
+	
+	// 필드 체크.
+	private int insertFieldCheck() {
+		int i = 0;
+		
+		if(tfProductName.getText().trim().length() == 0) {
+			i++;
+			tfProductName.requestFocus();
+		}
+		if(tfProductPrice.getText().trim().length() == 0) {
+			i++;
+			tfProductPrice.requestFocus();
+		}
+		if(taDetail.getText().trim().length() == 0) {
+			i++;
+			taDetail.requestFocus();
+		}
+		if(taNutritional.getText().trim().length() == 0) {
+			i++;
+			taNutritional.requestFocus();
+		}
+		if(taIngredient.getText().trim().length() == 0) {
+			i++;
+			taIngredient.requestFocus();
+		}
+		if(tfImage.getText().trim().length() == 0) {
+			i++;
+			tfImage.requestFocus();
+		}
+		return i;
+	}//insertFieldCheck
+	// 컬럼 내용 지우기.
+	private void clearColumn() {
+		tfProductName.setText("");
+		tfProductPrice.setText("");
+		taDetail.setText("");
+		taNutritional.setText("");
+		taIngredient.setText("");
+		tfImage.setText("");
+		lblImage.setIcon(null);
+	}
+	private void addNewProduct() {
+		String productName = tfProductName.getText().trim();
+		String productPrice = tfProductPrice.getText().trim();
+		String detail = taDetail.getText().trim();
+		String nutritional = taNutritional.getText().trim();
+		String ingredient = taIngredient.getText().trim();
+		String imageName = tfImage.getText().trim();
+		
+		// Image File
+		FileInputStream input = null;
+		File file = new File(imageName);
+		try {
+			input = new FileInputStream(file);
+			
+		}catch(FileNotFoundException e) { 
+			e.printStackTrace();
+		}
+		// proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
+		ProductDAO productDAO = new ProductDAO(productName, productPrice, detail, nutritional, ingredient, input, imageName, item);
+		boolean result = dao.insertAction();
+		
+		if(result == true) {
+			JOptionPane.showMessageDialog(null,  tfName.getText() + "님의 정보가 입력 되었습니다.");
+		}else {
+			JOptionPane.showMessageDialog(null, "입력중 문제가 발생했습니다.");
+		}
+	}	//End of clearColumn()
+	
+	// -----------------[[[ File ]]]]]]---------------------------------------------------
+
+	private void filePath() {
+		JFileChooser chooser = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("JPG", "PNG", "BMP", "GIF", "jpg", "png", "bmp", "gifs");
+		chooser.setFileFilter(filter);
+		
+		int ret = chooser.showOpenDialog(null);
+		if(ret != JFileChooser.APPROVE_OPTION) {
+			JOptionPane.showMessageDialog(null, "파일을 선택하지 않았습니다.");
+			return;
+		}
+		String filePath = chooser.getSelectedFile().getPath();
+		tfImage.setText(filePath);
+		lblImage.setIcon(new ImageIcon(filePath));
+		lblImage.setHorizontalAlignment(SwingConstants.CENTER);
+		
+	}//filePath
 }

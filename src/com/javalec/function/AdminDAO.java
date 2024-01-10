@@ -133,7 +133,7 @@ public class AdminDAO {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		
+		System.out.println(itemList);
 		return itemList;
 	}	// End of selectProductListByItem
 	
