@@ -357,7 +357,7 @@ public class ProductList extends JFrame {
 	// 상품관리 테이블 불러오기.
 	private void searchProductAction() {
 		String item = (String) cbProduct.getSelectedItem();
-		System.out.println(cbProduct.getSelectedItem());		
+//		System.out.println(cbProduct.getSelectedItem());		
 		String val = tfProduct.getText();
 		
 		ProductDAO prodcutDAO = new ProductDAO();
@@ -367,12 +367,14 @@ public class ProductList extends JFrame {
 		for(int i=0; i<listCount; i++) {
 //			proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
 			String proname = dtoList.get(i).getProname();
+			String engproname = dtoList.get(i).getEngproname();
 			String sellprice = df.format(dtoList.get(i).getSellprice())+"원";
 			String detail = dtoList.get(i).getDetail();
 //			String nutritional = dtoList.get(i).getNutritional();
 //			String ingredient = dtoList.get(i).getIngredient();
 			String imagename = dtoList.get(i).getImagename();
 			String wkItem = dtoList.get(i).getItem();
+//			ImageIcon icon = new ImageIcon("./"+engproname);
 			ImageIcon icon = new ImageIcon("./"+imagename);
 			Image img = icon.getImage();
 			Image changeImg = img.getScaledInstance(100,100, Image.SCALE_SMOOTH);

@@ -55,6 +55,9 @@ public class ProductUpdate extends JFrame {
 	private JTextField tfImage;
 	private JButton btnImage;
 	private JButton btnUpdate;
+	private JLabel lblNewLabel_1_2;
+	private JTextField tfEngName;
+	private JLabel lblNewLabel_1_2_1;
 //	public String proname;
 
 	/**
@@ -134,6 +137,9 @@ public class ProductUpdate extends JFrame {
 			UpdateProduct.add(getTfImage());
 			UpdateProduct.add(getBtnImage());
 			UpdateProduct.add(getBtnUpdate());
+			UpdateProduct.add(getLblNewLabel_1_2());
+			UpdateProduct.add(getTfEngName());
+			UpdateProduct.add(getLblNewLabel_1_2_1());
 		}
 		return UpdateProduct;
 	}
@@ -189,7 +195,7 @@ public class ProductUpdate extends JFrame {
 	private JTextField getTfProductName() {
 		if (tfProductName == null) {
 			tfProductName = new JTextField();
-			tfProductName.setBounds(117, 63, 432, 21);
+			tfProductName.setBounds(117, 63, 217, 21);
 			tfProductName.setColumns(10);
 		}
 		return tfProductName;
@@ -198,28 +204,28 @@ public class ProductUpdate extends JFrame {
 		if (tfProductPrice == null) {
 			tfProductPrice = new JTextField();
 			tfProductPrice.setColumns(10);
-			tfProductPrice.setBounds(117, 113, 432, 21);
+			tfProductPrice.setBounds(117, 113, 217, 21);
 		}
 		return tfProductPrice;
 	}
 	private JTextArea getTaDetail() {
 		if (taDetail == null) {
 			taDetail = new JTextArea();
-			taDetail.setBounds(117, 156, 432, 47);
+			taDetail.setBounds(117, 156, 503, 47);
 		}
 		return taDetail;
 	}
 	private JTextArea getTaNutritional() {
 		if (taNutritional == null) {
 			taNutritional = new JTextArea();
-			taNutritional.setBounds(117, 223, 432, 47);
+			taNutritional.setBounds(117, 223, 503, 47);
 		}
 		return taNutritional;
 	}
 	private JTextArea getTaIngredient() {
 		if (taIngredient == null) {
 			taIngredient = new JTextArea();
-			taIngredient.setBounds(117, 287, 432, 47);
+			taIngredient.setBounds(117, 287, 503, 47);
 		}
 		return taIngredient;
 	}
@@ -264,7 +270,28 @@ public class ProductUpdate extends JFrame {
 		}
 		return btnUpdate;
 	}
-	
+	private JLabel getLblNewLabel_1_2() {
+		if (lblNewLabel_1_2 == null) {
+			lblNewLabel_1_2 = new JLabel("영문명 : ");
+			lblNewLabel_1_2.setBounds(346, 66, 57, 15);
+		}
+		return lblNewLabel_1_2;
+	}
+	private JTextField getTfEngName() {
+		if (tfEngName == null) {
+			tfEngName = new JTextField();
+			tfEngName.setColumns(10);
+			tfEngName.setBounds(403, 60, 217, 21);
+		}
+		return tfEngName;
+	}
+	private JLabel getLblNewLabel_1_2_1() {
+		if (lblNewLabel_1_2_1 == null) {
+			lblNewLabel_1_2_1 = new JLabel("원");
+			lblNewLabel_1_2_1.setBounds(348, 116, 57, 15);
+		}
+		return lblNewLabel_1_2_1;
+	}
 	// === Function ======
 	// 카테고리 가져오기.
 	private void getComboCategory() {
@@ -323,11 +350,13 @@ public class ProductUpdate extends JFrame {
 		return i;
 	}//insertFieldCheck
 	// 상품수정화면으로 이동시 기본정보 로드.
-	private void loadDetailProduct(String productName) {		
-		ProductDAO productDAO = new ProductDAO(productName);
-		ProductDTO productDTO = productDAO.loadDetailProduct();
+	private void loadDetailProduct(String productName) {	
+		System.out.println("ProductUpdate : proname  : "+productName);
+		ProductDAO productDAO = new ProductDAO();
+		ProductDTO productDTO = productDAO.loadDetailProduct(productName);
 		
 		tfProductName.setText(productDTO.getProname());
+		tfEngName.setText(productDTO.getEngproname());
 		tfProductPrice.setText(Integer.toString(productDTO.getSellprice()));
 		taDetail.setText(productDTO.getDetail());
 		taNutritional.setText(productDTO.getNutritional());
@@ -349,6 +378,7 @@ public class ProductUpdate extends JFrame {
 		int i_chk = insertFieldCheck();
 		if(i_chk == 0) {
 			String productName = tfProductName.getText().trim();
+			String engproName = tfEngName.getText().trim();
 			int productPrice = Integer.parseInt(tfProductPrice.getText().trim().replace(",", ""));
 			String detail = taDetail.getText().trim();
 			String nutritional = taNutritional.getText().trim();
@@ -366,10 +396,14 @@ public class ProductUpdate extends JFrame {
 				e.printStackTrace();
 			}
 			// proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
-			ProductDAO productDAO = new ProductDAO(productName, productPrice, detail, nutritional, ingredient, input, imageName, item);
+			ProductDAO productDAO = new ProductDAO(productName, engproName, productPrice, detail, nutritional, ingredient, input, imageName, item);
 			boolean result = productDAO.updateProductAction();
 			
-			if(result == true) {
+			// 상품 등록시 Register에도 등록함. 
+//			String proname, int regseq, String adminid, int stonum, String item, String regdate, String gubun
+			boolean result1 = productDAO.insertRegisterAction(productName, item, "수정");
+			
+			if(result == true && result1 == true) {
 				JOptionPane.showMessageDialog(null,  tfProductName.getText() + " 상품이 수정되었습니다.");
 				gotoProductList();
 			}else {
@@ -408,4 +442,5 @@ public class ProductUpdate extends JFrame {
 		lblImage.setHorizontalAlignment(SwingConstants.CENTER);
 		
 	}//filePath
+
 }

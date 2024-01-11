@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 public class ProductDTO {
 	// Field
 	String proname;
+	String engproname;
 	int sellprice;
 	String detail;
 	String nutritional;
@@ -17,10 +18,11 @@ public class ProductDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ProductDTO(String proname, int sellprice, String detail, String nutritional, String ingredient,
-			String imagename, String item) { 	// proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
+	public ProductDTO(String proname, String engproname, int sellprice, String detail, String nutritional,
+			String ingredient, String imagename, String item) {
 		super();
 		this.proname = proname;
+		this.engproname = engproname;
 		this.sellprice = sellprice;
 		this.detail = detail;
 		this.nutritional = nutritional;
@@ -28,14 +30,21 @@ public class ProductDTO {
 		this.imagename = imagename;
 		this.item = item;
 	}
-	
-	// Method
+
 	public String getProname() {
 		return proname;
 	}
 
 	public void setProname(String proname) {
 		this.proname = proname;
+	}
+
+	public String getEngproname() {
+		return engproname;
+	}
+
+	public void setEngproname(String engproname) {
+		this.engproname = engproname;
 	}
 
 	public int getSellprice() {
@@ -85,5 +94,4 @@ public class ProductDTO {
 	public void setItem(String item) {
 		this.item = item;
 	}
-	
 }

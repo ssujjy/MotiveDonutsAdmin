@@ -52,6 +52,9 @@ public class ProductAdd extends JFrame {
 	private JTextField tfImage;
 	private JButton btnImage;
 	private JButton btnSave;
+	private JLabel lblNewLabel_1_2;
+	private JLabel lblNewLabel_1_2_1;
+	private JTextField tfEngName;
 
 	/**
 	 * Launch the application.
@@ -125,6 +128,9 @@ public class ProductAdd extends JFrame {
 			AddNewProduct.add(getTfImage());
 			AddNewProduct.add(getBtnImage());
 			AddNewProduct.add(getBtnSave());
+			AddNewProduct.add(getLblNewLabel_1_2());
+			AddNewProduct.add(getLblNewLabel_1_2_1());
+			AddNewProduct.add(getTfEngName());
 		}
 		return AddNewProduct;
 	}
@@ -180,7 +186,7 @@ public class ProductAdd extends JFrame {
 	private JTextField getTfProductName() {
 		if (tfProductName == null) {
 			tfProductName = new JTextField();
-			tfProductName.setBounds(117, 63, 432, 21);
+			tfProductName.setBounds(117, 63, 217, 21);
 			tfProductName.setColumns(10);
 		}
 		return tfProductName;
@@ -189,7 +195,7 @@ public class ProductAdd extends JFrame {
 		if (tfProductPrice == null) {
 			tfProductPrice = new JTextField();
 			tfProductPrice.setColumns(10);
-			tfProductPrice.setBounds(117, 113, 432, 21);
+			tfProductPrice.setBounds(117, 113, 217, 21);
 		}
 		return tfProductPrice;
 	}
@@ -255,7 +261,28 @@ public class ProductAdd extends JFrame {
 		}
 		return btnSave;
 	}
-	
+	private JLabel getLblNewLabel_1_2() {
+		if (lblNewLabel_1_2 == null) {
+			lblNewLabel_1_2 = new JLabel("영문명 : ");
+			lblNewLabel_1_2.setBounds(357, 66, 57, 15);
+		}
+		return lblNewLabel_1_2;
+	}
+	private JLabel getLblNewLabel_1_2_1() {
+		if (lblNewLabel_1_2_1 == null) {
+			lblNewLabel_1_2_1 = new JLabel("원");
+			lblNewLabel_1_2_1.setBounds(359, 116, 57, 15);
+		}
+		return lblNewLabel_1_2_1;
+	}
+	private JTextField getTfEngName() {
+		if (tfEngName == null) {
+			tfEngName = new JTextField();
+			tfEngName.setColumns(10);
+			tfEngName.setBounds(414, 60, 217, 21);
+		}
+		return tfEngName;
+	}
 	// === Function ======
 	// 카테고리 가져오기.
 	private void getComboCategory() {
@@ -325,11 +352,12 @@ public class ProductAdd extends JFrame {
 	
 	private void insertNewProduct() {
 		String productName = tfProductName.getText().trim();
+		String engproName = tfEngName.getText().trim();
 		int productPrice = Integer.parseInt(tfProductPrice.getText().trim().replace(",", ""));
 		String detail = taDetail.getText().trim();
 		String nutritional = taNutritional.getText().trim();
 		String ingredient = taIngredient.getText().trim();
-		String imageName = tfImage.getText().trim();
+		String imageName = tfImage.getText().trim();	
 		String item = (String) cbItem.getSelectedItem();
 		
 		// Image File
@@ -342,10 +370,15 @@ public class ProductAdd extends JFrame {
 			e.printStackTrace();
 		}
 		// proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
-		ProductDAO productDAO = new ProductDAO(productName, productPrice, detail, nutritional, ingredient, input, imageName, item);
+		ProductDAO productDAO = new ProductDAO(productName, engproName, productPrice, detail, nutritional, ingredient, input, engproName, item);	// 이미지 이름에 영어이름으로 넣어봅.
 		boolean result = productDAO.insertProductAction();
+		System.out.println("1 : "+result);
+		// 상품 등록시 Register에도 등록함. 
+//		String proname, int regseq, String adminid, int stonum, String item, String regdate, String gubun
+		boolean result1 = productDAO.insertRegisterAction(productName, item, "등록");
+		System.out.println("2 : "+result1);
 		
-		if(result == true) {
+		if(result == true && result1 == true) {
 			JOptionPane.showMessageDialog(null,  tfProductName.getText() + " 상품이 등록되었습니다.");
 			gotoProductList();
 		}else {
@@ -379,4 +412,5 @@ public class ProductAdd extends JFrame {
 		lblImage.setHorizontalAlignment(SwingConstants.CENTER);
 		
 	}//filePath
+
 }
