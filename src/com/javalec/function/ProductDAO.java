@@ -75,7 +75,7 @@ public class ProductDAO {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
 			Statement stmt_mysql = conn_mysql.createStatement();
-			System.out.println(whereDefault+where);
+//			System.out.println(whereDefault+where);
 			ResultSet rs = stmt_mysql.executeQuery(whereDefault+where);
 			while(rs.next()) {	
 				String proname = rs.getString(1);
@@ -213,7 +213,7 @@ public class ProductDAO {
 					+ " WHERE r.proname = p.proname";
 			String where = " AND  p.proname = '"+ pproname + "'";
 			
-			System.out.println(whereDefault+where);
+//			System.out.println(whereDefault+where);
 			
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");

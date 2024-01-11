@@ -372,11 +372,11 @@ public class ProductAdd extends JFrame {
 		// proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
 		ProductDAO productDAO = new ProductDAO(productName, engproName, productPrice, detail, nutritional, ingredient, input, engproName, item);	// 이미지 이름에 영어이름으로 넣어봅.
 		boolean result = productDAO.insertProductAction();
-		System.out.println("1 : "+result);
+//		System.out.println("1 : "+result);
 		// 상품 등록시 Register에도 등록함. 
 //		String proname, int regseq, String adminid, int stonum, String item, String regdate, String gubun
 		boolean result1 = productDAO.insertRegisterAction(productName, item, "등록");
-		System.out.println("2 : "+result1);
+//		System.out.println("2 : "+result1);
 		
 		if(result == true && result1 == true) {
 			JOptionPane.showMessageDialog(null,  tfProductName.getText() + " 상품이 등록되었습니다.");
