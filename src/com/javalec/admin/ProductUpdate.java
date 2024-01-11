@@ -351,7 +351,7 @@ public class ProductUpdate extends JFrame {
 	}//insertFieldCheck
 	// 상품수정화면으로 이동시 기본정보 로드.
 	private void loadDetailProduct(String productName) {	
-		System.out.println("ProductUpdate : proname  : "+productName);
+//		System.out.println("ProductUpdate : proname  : "+productName);
 		ProductDAO productDAO = new ProductDAO();
 		ProductDTO productDTO = productDAO.loadDetailProduct(productName);
 		
