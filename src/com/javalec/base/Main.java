@@ -9,7 +9,6 @@ import javax.swing.JTextField;
 
 import com.javalec.admin.ProductList;
 import com.javalec.admin.SalesList;
-import com.javalec.admin.StockList;
 import com.javalec.common.ShareVar;
 import com.javalec.function.AdminDAO;
 
