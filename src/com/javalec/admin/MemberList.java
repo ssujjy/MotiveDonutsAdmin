@@ -39,7 +39,7 @@ import javax.swing.JLabel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class ProductList extends JFrame {
+public class MemberList extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -72,7 +72,7 @@ public class ProductList extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ProductList frame = new ProductList();
+					MemberList frame = new MemberList();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -84,7 +84,7 @@ public class ProductList extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ProductList() {
+	public MemberList() {
 		setTitle("상품목록");
 		addWindowListener(new WindowAdapter() {
 //			@Override

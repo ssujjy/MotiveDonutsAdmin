@@ -56,7 +56,7 @@ public class ProductDAO {
 	}
 
 	// Method
-	// ========= [ 상품관리 Tab ] ========
+	// ========= [ 상품관리 ] ========
 	// 카테고리별로 상품 목록 가져오기 
 	public ArrayList<ProductDTO> selectProductListByItem(String item, String val){
 		
@@ -206,106 +206,178 @@ public class ProductDAO {
 		return true;
 	}
 	// Table을 Click 하였을 경우 수정화면으로 이동하여 해당 필드에 데이터 입력하여 보여줌. 
-		public ProductDTO loadDetailProduct(String pproname) {
-			ProductDTO dto = null;
-			String whereDefault = "SELECT p.proname, p.engproname, p.sellprice, p.detail, p.nutritional, p.ingredient, p.imagename, p.image, r.item"
-					+ " FROM register r, product p"
-					+ " WHERE r.proname = p.proname";
-			String where = " AND  p.proname = '"+ pproname + "'";
-			
+	public ProductDTO loadDetailProduct(String pproname) {
+		ProductDTO dto = null;
+		String whereDefault = "SELECT p.proname, p.engproname, p.sellprice, p.detail, p.nutritional, p.ingredient, p.imagename, p.image, r.item"
+				+ " FROM register r, product p"
+				+ " WHERE r.proname = p.proname";
+		String where = " AND  p.proname = '"+ pproname + "'";
+		
 //			System.out.println(whereDefault+where);
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
+			Statement stmt_mysql = conn_mysql.createStatement();
 			
-			try {
-				Class.forName("com.mysql.cj.jdbc.Driver");
-				Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
-				Statement stmt_mysql = conn_mysql.createStatement();
-				
-				ResultSet rs = stmt_mysql.executeQuery(whereDefault+where);
-				if(rs.next()) {
-					String wProname = rs.getString(1);
-					String wEngproname = rs.getString(2);
-					int wSellprice = rs.getInt(3);
-					String wDetail = rs.getString(4);
-					String wNutritional = rs.getString(5);
-					String wIngredient = rs.getString(6);
-					String wImagename = rs.getString(7);
-					// File  그림 파일을 하나만들어준다.
-					File file = new File(wImagename);
-					FileOutputStream output = new FileOutputStream(file);
-					InputStream input = rs.getBinaryStream(8);
-					byte[] buffer = new byte[1024];
-					while(input.read(buffer) > 0 ) {
-						output.write(buffer);
-					}
-					String wItem = rs.getString(9);
-					
-					dto = new ProductDTO(wProname, wEngproname, wSellprice, wDetail, wNutritional, wIngredient, wImagename, wItem);
-					
+			ResultSet rs = stmt_mysql.executeQuery(whereDefault+where);
+			if(rs.next()) {
+				String wProname = rs.getString(1);
+				String wEngproname = rs.getString(2);
+				int wSellprice = rs.getInt(3);
+				String wDetail = rs.getString(4);
+				String wNutritional = rs.getString(5);
+				String wIngredient = rs.getString(6);
+				String wImagename = rs.getString(7);
+				// File  그림 파일을 하나만들어준다.
+				File file = new File(wImagename);
+				FileOutputStream output = new FileOutputStream(file);
+				InputStream input = rs.getBinaryStream(8);
+				byte[] buffer = new byte[1024];
+				while(input.read(buffer) > 0 ) {
+					output.write(buffer);
 				}
-				conn_mysql.close();
+				String wItem = rs.getString(9);
 				
-			}catch(Exception e){
-				e.printStackTrace();
+				dto = new ProductDTO(wProname, wEngproname, wSellprice, wDetail, wNutritional, wIngredient, wImagename, wItem);
+				
 			}
+			conn_mysql.close();
 			
-			return dto;
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		
-		// 기존상품 업데이트.	// 구분을 두어서 상품을 전시할지 말지 결정할것.(삭제시 안보이게 할거면)
-		public boolean updateProductAction() {
-			PreparedStatement ps = null; 
-			
-			try {
-				Class.forName("com.mysql.cj.jdbc.Driver");
-				Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
-				Statement stmt_mysql = conn_mysql.createStatement();
-				//UPDATE `motivedonuts`.`product` SET `sellprice` = '5200', `ingredient` = '녹차, 우유', `imagename` = 'the_green_mugwort' WHERE (`proname` = '더 그린 쑥 블렌디드');
+		return dto;
+	}
+		
+	// 기존상품 업데이트.	// 구분을 두어서 상품을 전시할지 말지 결정할것.(삭제시 안보이게 할거면)
+	public boolean updateProductAction() {
+		PreparedStatement ps = null; 
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
+			Statement stmt_mysql = conn_mysql.createStatement();
+			//UPDATE `motivedonuts`.`product` SET `sellprice` = '5200', `ingredient` = '녹차, 우유', `imagename` = 'the_green_mugwort' WHERE (`proname` = '더 그린 쑥 블렌디드');
 //				proname, sellprice, detail, nutritional, ingredient, image, imagename
-				String A = "UPDATE product SET engproname = ?, sellprice = ?, detail = ?, nutritional = ?, ingredient = ?, image = ?, imagename = ? ";
-				String B = " WHERE proname = ?";
-				
-				ps = conn_mysql.prepareStatement(A+B);
-				ps.setString(1, engproname);
-				ps.setInt(2, sellprice);
-				ps.setString(3, detail);
-				ps.setString(4, nutritional);
-				ps.setString(5, ingredient);
-				ps.setBinaryStream(6, image);
-				ps.setString(7, imagename);
-				ps.setString(8, proname);
-				ps.executeUpdate();
-				
-				conn_mysql.close();
-				
-			}catch(Exception e) {
-//				e.printStackTrace();
-				return false;
-			}
-			return true;
-		}
-
-		// 삭제	// 구분을 두어서 상품을 전시할지 말지 결정할것.(삭제시 안보이게 할거면)
-		public boolean deleteProductAction() {
-			PreparedStatement ps = null; 
+			String A = "UPDATE product SET engproname = ?, sellprice = ?, detail = ?, nutritional = ?, ingredient = ?, image = ?, imagename = ? ";
+			String B = " WHERE proname = ?";
 			
-			try {
-				Class.forName("com.mysql.cj.jdbc.Driver");
-				Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
-				Statement stmt_mysql = conn_mysql.createStatement();
-				
-				String A = "DELETE FROM product";
-				String B = " WHERE proname = ?";
-				
-				ps = conn_mysql.prepareStatement(A+B);
-				ps.setString(1, proname);
-				ps.executeUpdate();
-				
-				conn_mysql.close();
-				
-			}catch(Exception e) {
+			ps = conn_mysql.prepareStatement(A+B);
+			ps.setString(1, engproname);
+			ps.setInt(2, sellprice);
+			ps.setString(3, detail);
+			ps.setString(4, nutritional);
+			ps.setString(5, ingredient);
+			ps.setBinaryStream(6, image);
+			ps.setString(7, imagename);
+			ps.setString(8, proname);
+			ps.executeUpdate();
+			
+			conn_mysql.close();
+			
+		}catch(Exception e) {
 //				e.printStackTrace();
-				return false;
-			}
-			return true;
+			return false;
 		}
+		return true;
+	}
+
+	// 삭제	// 구분을 두어서 상품을 전시할지 말지 결정할것.(삭제시 안보이게 할거면)
+	public boolean deleteProductAction() {
+		PreparedStatement ps = null; 
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
+			Statement stmt_mysql = conn_mysql.createStatement();
+			
+			String A = "DELETE FROM product";
+			String B = " WHERE proname = ?";
+			
+			ps = conn_mysql.prepareStatement(A+B);
+			ps.setString(1, proname);
+			ps.executeUpdate();
+			
+			conn_mysql.close();
+			
+		}catch(Exception e) {
+//				e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	// ========= [ 상품분류(Category/Item) 관리 ] ========
+	// 상품분류 등록.
+	public boolean insertItemAction(String pItem) {
+		PreparedStatement ps = null; 
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
+			
+			String A = "INSERT INTO category (item)";
+			String B = "values (?)";
+			
+			
+			ps = conn_mysql.prepareStatement(A+B);
+			ps.setString(1, pItem);
+			ps.executeUpdate();
+			
+			conn_mysql.close();
+			
+		}catch(Exception e) {
+//						e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	// 상품분류 수정.
+	public boolean updateItemAction(String inputItem, String pItem) {
+		PreparedStatement ps = null; 
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
+			
+			String A = "UPDATE category SET item = ? ";
+			String B = " WHERE item = ?";
+			
+			
+			ps = conn_mysql.prepareStatement(A+B);
+			ps.setString(1, inputItem);
+			ps.setString(2, pItem);
+			ps.executeUpdate();
+			
+			conn_mysql.close();
+			
+		}catch(Exception e) {
+//							e.printStackTrace();
+			return false;
+		}
+		return true;
+	}//updateItemAction
+	// 상품분류 삭제.
+	public boolean deleteItemAction(String pItem) {
+		PreparedStatement ps = null; 
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
+			
+			String A = "DELETE FROM category";
+			String B = " WHERE item = ?";
+			
+			
+			ps = conn_mysql.prepareStatement(A+B);
+			ps.setString(1, pItem);
+			ps.executeUpdate();
+			
+			conn_mysql.close();
+			
+		}catch(Exception e) {
+			return false;
+		}
+		return true;
+	}//updateItemAction
+	
 }
