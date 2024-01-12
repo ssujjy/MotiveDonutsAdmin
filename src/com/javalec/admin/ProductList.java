@@ -65,6 +65,7 @@ public class ProductList extends JFrame {
 	private JButton btnStock;
 	private JButton btnMember;
 	private JButton btnPurchase;
+	private JButton btnProductList;
 	/**
 	 * Launch the application.
 	 */
@@ -176,6 +177,7 @@ public class ProductList extends JFrame {
 			tabProduct.add(getBtnStock());
 			tabProduct.add(getBtnMember());
 			tabProduct.add(getBtnPurchase());
+			tabProduct.add(getBtnProductList());
 		}
 		return tabProduct;
 	}
@@ -274,7 +276,69 @@ public class ProductList extends JFrame {
 			btnAddNewProduct.setBounds(793, 19, 118, 23);
 		}
 		return btnAddNewProduct;
-	}// 여기까지 상품관리 화면.
+	}
+	// ==================== 아래 메뉴 ================================
+	private JButton getBtnProductList() {
+		if (btnProductList == null) {
+			btnProductList = new JButton("상품관리");
+			btnProductList.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoProductList();
+				}
+			});
+			btnProductList.setBounds(40, 417, 146, 23);
+		}
+		return btnProductList;
+	}
+	private JButton getBtnItem() {
+		if (btnItem == null) {
+			btnItem = new JButton("상품종류 관리");
+			btnItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoItemList();
+				}
+			});
+			btnItem.setBounds(216, 417, 146, 23);
+		}
+		return btnItem;
+	}
+	private JButton getBtnStock() {
+		if (btnStock == null) {
+			btnStock = new JButton("상품재고 관리");
+			btnStock.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoStockList();
+				}
+			});
+			btnStock.setBounds(400, 417, 146, 23);
+		}
+		return btnStock;
+	}
+	private JButton getBtnMember() {
+		if (btnMember == null) {
+			btnMember = new JButton("회원 관리");
+			btnMember.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoMemberList();
+				}
+			});
+			btnMember.setBounds(590, 417, 146, 23);
+		}
+		return btnMember;
+	}
+	private JButton getBtnPurchase() {
+		if (btnPurchase == null) {
+			btnPurchase = new JButton("매출관리");
+			btnPurchase.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoSalesList();
+				}
+			});
+			btnPurchase.setBounds(765, 417, 146, 23);
+		}
+		return btnPurchase;
+	}
+	// ==================== 아래 메뉴 ================================
 	
 	// [상품관리] ===== Function ========================
 	private void tableProductInit() { //			proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
@@ -411,6 +475,7 @@ public class ProductList extends JFrame {
 		tcm.getColumn(4).setCellRenderer(center);
 		
 	}	// End of searchAction()
+	
 	private void closingAction() {
 		for(int index=0; index < dtoList.size(); index++) {
 			File file = new File("./" + dtoList.get(index).getImagename());
@@ -430,105 +495,43 @@ public class ProductList extends JFrame {
 //		productUpdate.proname = productName;
 		productUpdate.main(null);
 	}
+	
+	// =========== 아래버튼 ========================
+	// 현재 창을 닫고 상품관리 페이지로 이동.
+	private void gotoProductList(){
+		this.setVisible(false);
+		ProductList productList = new ProductList();
+		productList.main(null);
+	}
 	// 현재 창을 닫고 상품분류 페이지로 이동.
 	private void gotoItemList(){
 		this.setVisible(false);
-		ProductUpdate productUpdate = new ProductUpdate();
-		productUpdate.main(null);
+		ItemList itemList = new ItemList();
+		itemList.main(null);
 	}
 	// 현재 창을 닫고 재고관리 페이지로 이동.
 	private void gotoStockList(){
 		this.setVisible(false);
-		ProductUpdate productUpdate = new ProductUpdate();
-		productUpdate.main(null);
+		StockList stockList = new StockList();
+		stockList.main(null);
 	}
 	// 현재 창을 닫고 회원관리 페이지로 이동.
 	private void gotoMemberList(){
 		this.setVisible(false);
-		ProductUpdate productUpdate = new ProductUpdate();
-		productUpdate.main(null);
+		MemberList memberList = new MemberList();
+		memberList.main(null);
 	}
 	// 현재 창을 닫고 매출관리 페이지로 이동.
 	private void gotoSalesList(){
 		this.setVisible(false);
-		ProductUpdate productUpdate = new ProductUpdate();
-		productUpdate.main(null);
+		SalesList salesList = new SalesList();
+		salesList.main(null);
 	}
-//	private void homeScreen() {
-//		this.frame.setVisible(false); // 현재화면 끄고
-//		Main window = new Main();
-//		window.frame.setVisible(true); // 홈 화면 키기
-//	}
-//	private void homeScreen() {
-//		// 로그인 성공시
-//		ShareVar.loginID = id1;
-//		frame.setVisible(false);
-//		Product_Search ps = new Product_Search();
-//		ps.main(null);
-//	}
-	// Table에서 Row를 click했을 경우 상품 수정 메소드를 호출.
+	// =========== 아래버튼 ========================
 	private void tableClick() {
 		int i = innerProductTable.getSelectedRow();
-//		String p_productName = (String) innerProductTable.getValueAt(i, 1);	// 테이블에서 상품명 가져오기.
 		ShareVar.proname = (String) innerProductTable.getValueAt(i, 1);	// 테이블에서 상품명 가져오기.
 		gotoUpdateProduct();
-		
-//		ProductDAO productDAO = new ProductDAO(p_productName);
-//		ProductDTO productDTO = productDAO.tableClick();
-		
-//		tfSeqNo.setText(Integer.toString(dto.getSeqno()));
-//		tfName.setText(dto.getName());
-//		tfTelno.setText(dto.getTelno());
-//		tfAddress.setText(dto.getAddress());
-//		tfEmail.setText(dto.getEmail());
-//		tfRelation.setText(dto.getRelation());
 	}
-	private JButton getBtnItem() {
-		if (btnItem == null) {
-			btnItem = new JButton("상품종류 관리");
-			btnItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					gotoItemList();
-				}
-			});
-			btnItem.setBounds(51, 418, 146, 23);
-		}
-		return btnItem;
-	}
-	private JButton getBtnStock() {
-		if (btnStock == null) {
-			btnStock = new JButton("상품재고 관리");
-			btnStock.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					gotoStockList();
-				}
-			});
-			btnStock.setBounds(235, 418, 146, 23);
-		}
-		return btnStock;
-	}
-	private JButton getBtnMember() {
-		if (btnMember == null) {
-			btnMember = new JButton("회원 관리");
-			btnMember.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					gotoMemberList();
-				}
-			});
-			btnMember.setBounds(426, 418, 146, 23);
-		}
-		return btnMember;
-	}
-	private JButton getBtnPurchase() {
-		if (btnPurchase == null) {
-			btnPurchase = new JButton("매출관리");
-			btnPurchase.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					gotoSalesList();
-				}
-			});
-			btnPurchase.setBounds(618, 418, 146, 23);
-		}
-		return btnPurchase;
-	}
+
 }

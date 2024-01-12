@@ -405,11 +405,19 @@ public class ItemList extends JFrame {
 			JOptionPane.showMessageDialog(null, "입력중 문제가 발생했습니다.");
 		}
 	}
-	// 현재 창을 닫고 상품목록 페이지로 이동.
+	
+	// =========== 아래버튼 ========================
+	// 현재 창을 닫고 상품관리 페이지로 이동.
 	private void gotoProductList(){
 		this.setVisible(false);
 		ProductList productList = new ProductList();
 		productList.main(null);
+	}
+	// 현재 창을 닫고 상품분류 페이지로 이동.
+	private void gotoItemList(){
+		this.setVisible(false);
+		ItemList itemList = new ItemList();
+		itemList.main(null);
 	}
 	// 현재 창을 닫고 재고관리 페이지로 이동.
 	private void gotoStockList(){
@@ -429,5 +437,5 @@ public class ItemList extends JFrame {
 		SalesList salesList = new SalesList();
 		salesList.main(null);
 	}
-
+	// =========== 아래버튼 ========================
 }
