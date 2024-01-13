@@ -105,8 +105,8 @@ public class SalesList extends JFrame {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			tabbedPane.setBounds(12, 10, 944, 492);
 
-			tabbedPane.addTab("월별매출", null, getTabMonth(), null);
-			tabbedPane.addTab("일별매출", null, getTabDay(), null);
+			tabbedPane.addTab("일별매출(금액)", null, getTabMonth(), null);
+			tabbedPane.addTab("일별매출(수량)", null, getTabDay(), null);
 		}
 		return tabbedPane;
 	}
@@ -130,13 +130,7 @@ public class SalesList extends JFrame {
 			panel = new JPanel();
 			panel.setBounds(24, 19, 887, 374);
 			panel.setLayout(null);
-			JFreeChart chart = getMonthlyPriceCart();
-//			JFreeChart chart = ChartFactory.createGanttChart("Chart Example","X Label","Y Label",null);
-//			JFreeChart chart = ChartFactory.createBarChart(getTitle(), getWarningString(), getName(), null);
-//			JFreeChart chart = ChartFactory.createBarChart("월별매출", // title
-//				    resourceMap.getString("graphDate.text"), // x-axis label
-//				    resourceMap.getString("graphCBills.text"), // y-axis label
-//				    dataset);
+			JFreeChart chart = getMonthlyPriceChart();
 			
 			ChartPanel chartPanel = new ChartPanel(chart);
 			
@@ -218,14 +212,22 @@ public class SalesList extends JFrame {
 	// ==================== 아래 메뉴 ================================
 
 	// 월별 매출금액 불러오기.
-	private JFreeChart getMonthlyPriceCart() {
+	private JFreeChart getMonthlyPriceChart() {
 		
 		SalesDAO salesDAO = new SalesDAO();
-		JFreeChart monthlyPriceChart = salesDAO.getChart();
+		JFreeChart monthlyPriceChart = salesDAO.getPriceChart();
 		
 		return monthlyPriceChart;
-	}	// End of searchAction()
+	}	// End of getMonthlyPriceCart()
 
+	// 월별 매출금액 불러오기.
+	private JFreeChart getMonthlyQTYChart() {
+		
+		SalesDAO salesDAO = new SalesDAO();
+		JFreeChart monthlyQTYChart = salesDAO.getQTYChart();
+		
+		return monthlyQTYChart;
+	}	// End of getMonthlyPriceCart()
 
 	
 	// =========== 아래버튼 ========================
