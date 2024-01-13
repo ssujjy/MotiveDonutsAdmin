@@ -76,34 +76,34 @@ public class SalesDAO {
 		// 월별 매출수량 그래프
 		rendererQTY.setDefaultItemLabelGenerator(generator);
 		rendererQTY.setDefaultItemLabelsVisible(true);
-		rendererQTY.setDefaultPositiveItemLabelPosition(p_below);
+		rendererQTY.setDefaultPositiveItemLabelPosition(p_center);
 		rendererQTY.setDefaultItemLabelFont(f);
 		rendererQTY.setSeriesPaint(0, new Color(232,168,255));
 
 		// plot 생성
-		final CategoryPlot plot = new CategoryPlot();
+		final CategoryPlot plotQTY = new CategoryPlot();
 		// plot 에 데이터 적재
-		plot.setDataset(datasetMonthlyQTY);	//plot에 월별 매출수량 데이터 적재
-		plot.setRenderer(rendererQTY);	//plot에 월별 매출수량 데이터 적재
+		plotQTY.setDataset(datasetMonthlyQTY);	//plot에 월별 매출수량 데이터 적재
+		plotQTY.setRenderer(rendererQTY);	//plot에 월별 매출수량 데이터 적재
 		
 		// plot 기본 설정
-		plot.setOrientation(PlotOrientation.VERTICAL);	// 그래프 표시 방향
-		plot.setRangeGridlinesVisible(true);	// X축 가이드 라인 표시여부
-		plot.setDomainGridlinesVisible(true);	// Y축 가이드 라인 표시여부
+		plotQTY.setOrientation(PlotOrientation.VERTICAL);	// 그래프 표시 방향
+		plotQTY.setRangeGridlinesVisible(true);	// X축 가이드 라인 표시여부
+		plotQTY.setDomainGridlinesVisible(true);	// Y축 가이드 라인 표시여부
 		
 		// 렌더링 순서 정의 : dataset 등록 순서대로 렌더링 ( 즉, 먼저 등록한게 아래로 깔림 )
-		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
+		plotQTY.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
 		
 		// X축 세팅
-		plot.setDomainAxis(new CategoryAxis()); // X축 종류 설정
-		plot.getDomainAxis().setTickLabelFont(axisF); // X축 눈금라벨 폰트 조정
-		plot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.STANDARD);	// 카테고리 라벨 위치 조정
+		plotQTY.setDomainAxis(new CategoryAxis()); // X축 종류 설정
+		plotQTY.getDomainAxis().setTickLabelFont(axisF); // X축 눈금라벨 폰트 조정
+		plotQTY.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.STANDARD);	// 카테고리 라벨 위치 조정
 		// Y축 세팅
-		plot.setRangeAxis(new NumberAxis());	// Y축 종류 설정
-		plot.getRangeAxis().setTickLabelFont(axisF); // Y축 눈금라벨 폰트 조정
+		plotQTY.setRangeAxis(new NumberAxis());	// Y축 종류 설정
+		plotQTY.getRangeAxis().setTickLabelFont(axisF); // Y축 눈금라벨 폰트 조정
 
 		// 세팅된 plot을 바탕으로 chart 생성
-		final JFreeChart chart = new JFreeChart(plot);
+		final JFreeChart chart = new JFreeChart(plotQTY);
 
 		return chart;
 	}
@@ -167,11 +167,11 @@ public class SalesDAO {
 		}
 	
 	public int selectQTYAction(String date){
-		int sumOfMonthlQTY = 0;
+		int sumOfMonthlyQTY = 0;
 		
 		String whereDefault = "SELECT sum(purqty) FROM purchase ";
 		String where = "WHERE purdate like '" + date + "%'";
-		System.out.println(whereDefault+where);
+
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
@@ -179,14 +179,14 @@ public class SalesDAO {
 			ResultSet rs = stmt_mysql.executeQuery(whereDefault+where);
 			
 			while(rs.next()) {	
-				sumOfMonthlQTY = rs.getInt(1);
+				sumOfMonthlyQTY = rs.getInt(1);
 			}
 			conn_mysql.close();
 			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		return sumOfMonthlQTY;
+		return sumOfMonthlyQTY;
 	}	// End of selectQTYAction
 	
 	public int selectPaypriceAction(String date){
@@ -194,7 +194,7 @@ public class SalesDAO {
 		
 		String whereDefault = "SELECT sum(payprice) FROM myorder ";
 		String where = "WHERE orderdate like '" + date + "%'";
-		System.out.println(whereDefault+where);
+
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
