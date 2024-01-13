@@ -50,13 +50,7 @@ public class SalesList extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTabbedPane tabbedPane;
-	private JPanel tabSales;
 	private JPanel tabMonth;
-	private JPanel tabMember;
-	private final DefaultTableModel outerSalesTable = new DefaultTableModel();
-	private final DefaultTableModel outerProductTable = new DefaultTableModel();
-	private final DefaultTableModel outerMemberTable = new DefaultTableModel();
-	private DecimalFormat df = new DecimalFormat("###,###,###,###");
 	private JButton btnItem;
 	private JButton btnStock;
 	private JButton btnMember;
@@ -64,6 +58,12 @@ public class SalesList extends JFrame {
 	private JButton btnProductList;
 	private JPanel panel;
 	private JPanel tabDay;
+	private JPanel panel_1;
+	private JButton btnProductList_1;
+	private JButton btnItem_1;
+	private JButton btnStock_1;
+	private JButton btnMember_1;
+	private JButton btnPurchase_1;
 	/**
 	 * Launch the application.
 	 */
@@ -105,8 +105,8 @@ public class SalesList extends JFrame {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			tabbedPane.setBounds(12, 10, 944, 492);
 
-			tabbedPane.addTab("일별매출(금액)", null, getTabMonth(), null);
-			tabbedPane.addTab("일별매출(수량)", null, getTabDay(), null);
+			tabbedPane.addTab("월별매출(금액)", null, getTabMonth(), null);
+			tabbedPane.addTab("월별매출(수량)", null, getTabDay(), null);
 		}
 		return tabbedPane;
 	}
@@ -131,9 +131,7 @@ public class SalesList extends JFrame {
 			panel.setBounds(24, 19, 887, 374);
 			panel.setLayout(null);
 			JFreeChart chart = getMonthlyPriceChart();
-			
 			ChartPanel chartPanel = new ChartPanel(chart);
-			
 			chartPanel.setBounds(12, 10, 867, 354);
 			panel.add(chartPanel);
 		}
@@ -142,13 +140,93 @@ public class SalesList extends JFrame {
 	private JPanel getTabDay() {
 		if (tabDay == null) {
 			tabDay = new JPanel();
+			tabDay.setLayout(null);
+			tabDay.add(getPanel_1());
 		}
 		return tabDay;
 	}
+	private JPanel getPanel_1() {
+		if (panel_1 == null) {
+			panel_1 = new JPanel();
+			panel_1.setBounds(12, 10, 915, 443);
+			panel_1.setLayout(null);
+			JFreeChart chart = getMonthlyQTYChart();
+			ChartPanel chartPanel = new ChartPanel(chart);
+			chartPanel.setBounds(12, 10, 867, 354);
+			panel_1.add(chartPanel);
+			panel_1.add(getBtnProductList_1());
+			panel_1.add(getBtnItem_1());
+			panel_1.add(getBtnStock_1());
+			panel_1.add(getBtnMember_1());
+			panel_1.add(getBtnPurchase_1());
+		}
+		return panel_1;
+	}
 	
+	// QTY 아래 메뉴 이동 버튼 ========================================================
+	private JButton getBtnProductList_1() {
+		if (btnProductList_1 == null) {
+			btnProductList_1 = new JButton("상품관리");
+			btnProductList_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoProductList();
+				}
+			});
+			btnProductList_1.setBounds(12, 395, 146, 23);
+		}
+		return btnProductList_1;
+	}
+	private JButton getBtnItem_1() {
+		if (btnItem_1 == null) {
+			btnItem_1 = new JButton("상품종류 관리");
+			btnItem_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoItemList();
+				}
+			});
+			btnItem_1.setBounds(188, 395, 146, 23);
+		}
+		return btnItem_1;
+	}
+	private JButton getBtnStock_1() {
+		if (btnStock_1 == null) {
+			btnStock_1 = new JButton("상품재고 관리");
+			btnStock_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoStockList();
+				}
+			});
+			btnStock_1.setBounds(372, 395, 146, 23);
+		}
+		return btnStock_1;
+	}
+	private JButton getBtnMember_1() {
+		if (btnMember_1 == null) {
+			btnMember_1 = new JButton("회원 관리");
+			btnMember_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoMemberList();
+				}
+			});
+			btnMember_1.setBounds(562, 395, 146, 23);
+		}
+		return btnMember_1;
+	}
+	private JButton getBtnPurchase_1() {
+		if (btnPurchase_1 == null) {
+			btnPurchase_1 = new JButton("매출관리");
+			btnPurchase_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoSalesList();
+				}
+			});
+			btnPurchase_1.setBounds(737, 395, 146, 23);
+		}
+		return btnPurchase_1;
+	}
+	// QTY 아래 메뉴 이동 버튼 ========================================================
 	
-	
-	// ==================== 아래 메뉴 ================================
+	// Price 아래 메뉴 이동 버튼 ================================
 	private JButton getBtnProductList() {
 		if (btnProductList == null) {
 			btnProductList = new JButton("상품관리");
@@ -209,7 +287,7 @@ public class SalesList extends JFrame {
 		}
 		return btnPurchase;
 	}
-	// ==================== 아래 메뉴 ================================
+	// Price 아래 메뉴 이동 버튼뉴 ================================
 
 	// 월별 매출금액 불러오기.
 	private JFreeChart getMonthlyPriceChart() {
@@ -261,8 +339,5 @@ public class SalesList extends JFrame {
 		SalesList salesList = new SalesList();
 		salesList.main(null);
 	}
-	// =========== 아래버튼 ========================
-
-
 
 }
