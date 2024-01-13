@@ -17,10 +17,12 @@ import javax.swing.table.TableColumnModel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
 
 import com.javalec.common.ShareVar;
 import com.javalec.function.AdminDAO;
 import com.javalec.function.ProductDAO;
+import com.javalec.function.SalesDAO;
 import com.javalec.model.ProductDTO;
 
 import javax.swing.event.ChangeEvent;
@@ -49,26 +51,19 @@ public class SalesList extends JFrame {
 	private JPanel contentPane;
 	private JTabbedPane tabbedPane;
 	private JPanel tabSales;
-	private JPanel tabProduct;
+	private JPanel tabMonth;
 	private JPanel tabMember;
 	private final DefaultTableModel outerSalesTable = new DefaultTableModel();
 	private final DefaultTableModel outerProductTable = new DefaultTableModel();
 	private final DefaultTableModel outerMemberTable = new DefaultTableModel();
 	private DecimalFormat df = new DecimalFormat("###,###,###,###");
-	private JPanel tabStock;
-	private JComboBox cbProduct;
-	private JTextField tfProduct;
-	private JButton btnSearchProduct;
-	private ArrayList<ProductDTO> dtoList = null;
-	private JLabel lblNewLabel;
-	private JLabel lblNewLabel_1;
-	private JButton btnAddNewProduct;
 	private JButton btnItem;
 	private JButton btnStock;
 	private JButton btnMember;
 	private JButton btnPurchase;
 	private JButton btnProductList;
 	private JPanel panel;
+	private JPanel tabDay;
 	/**
 	 * Launch the application.
 	 */
@@ -91,22 +86,8 @@ public class SalesList extends JFrame {
 	public SalesList() {
 		setTitle("매출관리");
 		addWindowListener(new WindowAdapter() {
-//			@Override
-//			public void windowActivated(WindowEvent e) {
-//				removeComboCategory();
-//				getComboCategory();
-//				tableProductInit();
-//				searchProductAction();
-//			}
 			@Override
 			public void windowOpened(WindowEvent e) {
-				removeComboCategory();
-				getComboCategory();
-				searchProductAction();
-			}
-			@Override
-			public void windowClosing(WindowEvent e) {
-				closingAction();
 			}
 		});
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -124,114 +105,55 @@ public class SalesList extends JFrame {
 			tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			tabbedPane.setBounds(12, 10, 944, 492);
 
-			tabbedPane.addTab("매출관리", null, getTabProduct(), null);
+			tabbedPane.addTab("월별매출", null, getTabMonth(), null);
+			tabbedPane.addTab("일별매출", null, getTabDay(), null);
 		}
 		return tabbedPane;
 	}
-	private JPanel getTabSales() {
-		if (tabSales == null) {
-			tabSales = new JPanel();
-			tabSales.setLayout(null);
+
+	private JPanel getTabMonth() {
+		if (tabMonth == null) {
+			tabMonth = new JPanel();
+			tabMonth.setLayout(null);
+			tabMonth.add(getBtnItem());
+			tabMonth.add(getBtnStock());
+			tabMonth.add(getBtnMember());
+			tabMonth.add(getBtnPurchase());
+			tabMonth.add(getBtnProductList());
+			tabMonth.add(getPanel());
 		}
-		return tabSales;
+		return tabMonth;
 	}
-	private JPanel getTabProduct() {
-		if (tabProduct == null) {
-			tabProduct = new JPanel();
-			tabProduct.setLayout(null);
-			tabProduct.add(getCbProduct());
-			tabProduct.add(getTfProduct());
-			tabProduct.add(getBtnSearchProduct());
-			tabProduct.add(getLblNewLabel());
-			tabProduct.add(getLblNewLabel_1());
-			tabProduct.add(getBtnAddNewProduct());
-			tabProduct.add(getBtnItem());
-			tabProduct.add(getBtnStock());
-			tabProduct.add(getBtnMember());
-			tabProduct.add(getBtnPurchase());
-			tabProduct.add(getBtnProductList());
-			tabProduct.add(getPanel());
-		}
-		return tabProduct;
-	}
-	private JPanel getTabMember() {
-		if (tabMember == null) {
-			tabMember = new JPanel();
-		}
-		return tabMember;
-	}
-	private JPanel getTabStock() {
-		if (tabStock == null) {
-			tabStock = new JPanel();
-		}
-		return tabStock;
-	}
-	// 여기까지 기본에서 Tab까지 구현한 화면 
-	
-	private JComboBox getCbProduct() {
-		if (cbProduct == null) {
-			cbProduct = new JComboBox();
-			cbProduct.setBounds(110, 19, 159, 23);
-		}
-		return cbProduct;
-	}
-	private JTextField getTfProduct() {
-		if (tfProduct == null) {
-			tfProduct = new JTextField();
-			tfProduct.setBounds(335, 20, 159, 21);
-			tfProduct.setColumns(10);
-		}
-		return tfProduct;
-	}
-	private JButton getBtnSearchProduct() {
-		if (btnSearchProduct == null) {
-			btnSearchProduct = new JButton("검색");
-			btnSearchProduct.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					searchProductAction(); 
-				}
-			});
-			btnSearchProduct.setBounds(506, 19, 97, 23);
-		}
-		return btnSearchProduct;
-	}
-	private JLabel getLblNewLabel() {
-		if (lblNewLabel == null) {
-			lblNewLabel = new JLabel("상품종류 : ");
-			lblNewLabel.setBounds(51, 23, 69, 15);
-		}
-		return lblNewLabel;
-	}
-	private JLabel getLblNewLabel_1() {
-		if (lblNewLabel_1 == null) {
-			lblNewLabel_1 = new JLabel("상품명 : ");
-			lblNewLabel_1.setBounds(281, 23, 69, 15);
-		}
-		return lblNewLabel_1;
-	} 
-	private JButton getBtnAddNewProduct() {
-		if (btnAddNewProduct == null) {
-			btnAddNewProduct = new JButton("새상품 등록");
-			btnAddNewProduct.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-				}
-			});
-			btnAddNewProduct.setBounds(793, 19, 118, 23);
-		}
-		return btnAddNewProduct;
-	}
+
 	private JPanel getPanel() {
 		if (panel == null) {
 			panel = new JPanel();
-			panel.setBounds(24, 69, 887, 324);
+			panel.setBounds(24, 19, 887, 374);
 			panel.setLayout(null);
-			JFreeChart chart = ChartFactory.createGanttChart("Chart Example","X Label","Y Label",null);
+			JFreeChart chart = getMonthlyPriceCart();
+//			JFreeChart chart = ChartFactory.createGanttChart("Chart Example","X Label","Y Label",null);
+//			JFreeChart chart = ChartFactory.createBarChart(getTitle(), getWarningString(), getName(), null);
+//			JFreeChart chart = ChartFactory.createBarChart("월별매출", // title
+//				    resourceMap.getString("graphDate.text"), // x-axis label
+//				    resourceMap.getString("graphCBills.text"), // y-axis label
+//				    dataset);
+			
 			ChartPanel chartPanel = new ChartPanel(chart);
-			chartPanel.setBounds(12, 10, 867, 304);
+			
+			chartPanel.setBounds(12, 10, 867, 354);
 			panel.add(chartPanel);
 		}
 		return panel;
 	}
+	private JPanel getTabDay() {
+		if (tabDay == null) {
+			tabDay = new JPanel();
+		}
+		return tabDay;
+	}
+	
+	
+	
 	// ==================== 아래 메뉴 ================================
 	private JButton getBtnProductList() {
 		if (btnProductList == null) {
@@ -294,60 +216,16 @@ public class SalesList extends JFrame {
 		return btnPurchase;
 	}
 	// ==================== 아래 메뉴 ================================
-	// 카테고리 가져오기.
-	private void getComboCategory() {
-		ProductDAO prodcutDAO = new ProductDAO();
-		ArrayList<String> listCategory = prodcutDAO.selectItem();
-//		String[] strCategory = new listCategory.get(0);
-		
-		for(int i=0; i<listCategory.size(); i++) {
-			cbProduct.addItem(listCategory.get(i));
-		}
-	}
-	// 카테고리 초기화.
-	private void removeComboCategory() {
-		int cntCategory = cbProduct.getItemCount();
-		for(int i=0; i<cntCategory; i++) {
-			cbProduct.remove(i);
-		}
-	}
-	// 상품관리 테이블 불러오기.
-	private void searchProductAction() {
-		String item = (String) cbProduct.getSelectedItem();
-//		System.out.println(cbProduct.getSelectedItem());		
-		String val = tfProduct.getText();
-		
-		ProductDAO prodcutDAO = new ProductDAO();
-		dtoList = prodcutDAO.selectProductListByItem(item, val);
 
-		int listCount = dtoList.size();
-		for(int i=0; i<listCount; i++) {
-//			proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
-			String proname = dtoList.get(i).getProname();
-			String engproname = dtoList.get(i).getEngproname();
-			String sellprice = df.format(dtoList.get(i).getSellprice())+"원";
-			String detail = dtoList.get(i).getDetail();
-//			String nutritional = dtoList.get(i).getNutritional();
-//			String ingredient = dtoList.get(i).getIngredient();
-			String imagename = dtoList.get(i).getImagename();
-			String wkItem = dtoList.get(i).getItem();
-//			ImageIcon icon = new ImageIcon("./"+engproname);
-			ImageIcon icon = new ImageIcon("./"+imagename);
-			Image img = icon.getImage();
-			Image changeImg = img.getScaledInstance(100,100, Image.SCALE_SMOOTH);
-			ImageIcon changeIcon = new ImageIcon(changeImg);
-			
-			Object[] tmpData = {changeIcon, proname, sellprice, detail, wkItem};
-			outerProductTable.addRow(tmpData);
-		}
+	// 월별 매출금액 불러오기.
+	private JFreeChart getMonthlyPriceCart() {
 		
+		SalesDAO salesDAO = new SalesDAO();
+		JFreeChart monthlyPriceChart = salesDAO.getChart();
+		
+		return monthlyPriceChart;
 	}	// End of searchAction()
-	private void closingAction() {
-		for(int index=0; index < dtoList.size(); index++) {
-			File file = new File("./" + dtoList.get(index).getImagename());
-			file.delete();
-		}
-	}
+
 
 	
 	// =========== 아래버튼 ========================
@@ -382,6 +260,7 @@ public class SalesList extends JFrame {
 		salesList.main(null);
 	}
 	// =========== 아래버튼 ========================
+
 
 
 }
