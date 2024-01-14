@@ -36,6 +36,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class ItemList extends JFrame {
 
@@ -58,7 +60,6 @@ public class ItemList extends JFrame {
 	private JTextField tfItem;
 	private JRadioButton rbNewItem;
 	private JRadioButton rbDeleteItem;
-	private JRadioButton rbSearchItem;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JButton btnOK;
 	/**
@@ -127,7 +128,6 @@ public class ItemList extends JFrame {
 			tabItem.add(getTfItem());
 			tabItem.add(getRbNewItem());
 			tabItem.add(getRbDeleteItem());
-			tabItem.add(getRbSearchItem());
 			tabItem.add(getBtnOK());
 		}
 		return tabItem;
@@ -136,7 +136,7 @@ public class ItemList extends JFrame {
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane();
-			scrollPane.setBounds(40, 112, 427, 276);
+			scrollPane.setBounds(12, 10, 427, 374);
 			scrollPane.setViewportView(getInnerItemTable());
 		}
 		return scrollPane;
@@ -161,29 +161,29 @@ public class ItemList extends JFrame {
 		}
 		return innerItemTable;
 	}
-	// -------------- 라디오버튼 그룹 ---------------- //
-	private JRadioButton getRbSearchItem() {
-		if (rbSearchItem == null) {
-			rbSearchItem = new JRadioButton("검색");
-			buttonGroup.add(rbSearchItem);
-			rbSearchItem.setSelected(true);
-			rbSearchItem.setBounds(40, 20, 61, 23);
-		}
-		return rbSearchItem;
-	}
 	private JRadioButton getRbNewItem() {
 		if (rbNewItem == null) {
 			rbNewItem = new JRadioButton("등록");
+			rbNewItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					screenPartition();
+				}
+			});
 			buttonGroup.add(rbNewItem);
-			rbNewItem.setBounds(105, 20, 61, 23);
+			rbNewItem.setBounds(481, 24, 61, 23);
 		}
 		return rbNewItem;
 	}
 	private JRadioButton getRbDeleteItem() {
 		if (rbDeleteItem == null) {
 			rbDeleteItem = new JRadioButton("삭제");
+			rbDeleteItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					screenPartition();
+				}
+			});
 			buttonGroup.add(rbDeleteItem);
-			rbDeleteItem.setBounds(170, 20, 61, 23);
+			rbDeleteItem.setBounds(546, 24, 61, 23);
 		}
 		return rbDeleteItem;
 	}
@@ -191,7 +191,7 @@ public class ItemList extends JFrame {
 	private JLabel getLblNewLabel() {
 		if (lblNewLabel == null) {
 			lblNewLabel = new JLabel("상품종류 : ");
-			lblNewLabel.setBounds(40, 64, 69, 15);
+			lblNewLabel.setBounds(481, 70, 69, 15);
 		}
 		return lblNewLabel;
 	}
@@ -199,7 +199,18 @@ public class ItemList extends JFrame {
 	private JTextField getTfItem() {
 		if (tfItem == null) {
 			tfItem = new JTextField();
-			tfItem.setBounds(109, 61, 242, 21);
+			tfItem.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+						tableItemInit();
+						searchItemAction();
+						screenPartition();
+					}
+					
+				}
+			});
+			tfItem.setBounds(550, 67, 242, 21);
 			tfItem.setColumns(10);
 		}
 		return tfItem;
@@ -213,7 +224,7 @@ public class ItemList extends JFrame {
 					okAction();
 				}
 			});
-			btnOK.setBounds(370, 60, 97, 23);
+			btnOK.setBounds(811, 66, 97, 23);
 		}
 		return btnOK;
 	}
@@ -316,12 +327,6 @@ public class ItemList extends JFrame {
 	
 	// Edit 결정
 	private void screenPartition() {
-		// 검색일 경우
-		if(rbSearchItem.isSelected() == true) {
-			btnOK.setVisible(true);
-			tfItem.setEditable(true);
-		}
-		
 		// 입력일 경우
 		if(rbNewItem.isSelected() == true) {
 			btnOK.setVisible(true);
@@ -336,22 +341,17 @@ public class ItemList extends JFrame {
 	}
 	private void okAction() {
 		String item = tfItem.getText().trim();
-		// 검색일 경우
-		if(rbSearchItem.isSelected() == true) {
-			screenPartition();
-		}
-		
 		// 입력일 경우
 		if(rbNewItem.isSelected() == true) {
 			int i_chk = insertFieldCheck();
 			if(i_chk == 0) {
 				insertItemAction(item);
-				tableItemInit();
-				searchItemAction();
-				clearColumn();
 			}else {
 				JOptionPane.showMessageDialog(null, "데이터를 확인하세요");
 			}
+			tableItemInit();
+			searchItemAction();
+			clearColumn();
 			screenPartition();
 		}
 
@@ -360,12 +360,12 @@ public class ItemList extends JFrame {
 			int i_chk = insertFieldCheck();
 			if(i_chk == 0) {
 				deleteItemAction(item);
-				tableItemInit();
-				searchItemAction();
-				clearColumn();
 			}else {
 				JOptionPane.showMessageDialog(null, "데이터를 확인하세요");
 			}
+			tableItemInit();
+			searchItemAction();
+			clearColumn();
 			screenPartition();
 		}
 	}
@@ -400,9 +400,9 @@ public class ItemList extends JFrame {
 		boolean result = dao.deleteItemAction(item);
 		
 		if(result == true) {
-			JOptionPane.showMessageDialog(null,  item + "님의 정보가 삭제 되었습니다.");
+			JOptionPane.showMessageDialog(null,  item + "이 삭제 되었습니다.");
 		}else {
-			JOptionPane.showMessageDialog(null, "입력중 문제가 발생했습니다.");
+			JOptionPane.showMessageDialog(null, "삭제중 문제가 발생했습니다.");
 		}
 	}
 	

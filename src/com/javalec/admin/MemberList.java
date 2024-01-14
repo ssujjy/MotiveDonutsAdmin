@@ -41,6 +41,8 @@ import javax.swing.JLabel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.DefaultComboBoxModel;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class MemberList extends JFrame {
 
@@ -49,6 +51,7 @@ public class MemberList extends JFrame {
 	private JTabbedPane tabbedPane;
 	private JPanel tabProduct;
 	private final DefaultTableModel outerMemberTable = new DefaultTableModel();
+	private ArrayList<MemberDTO> dtoList = null;
 	private JTextField tfMember;
 	private JButton btnSearchMember;
 	private JScrollPane scrollPane;
@@ -85,6 +88,10 @@ public class MemberList extends JFrame {
 			public void windowOpened(WindowEvent e) {
 				tableMemberInit();
 				searchMemberAction();
+			}
+			@Override
+			public void windowClosing(WindowEvent e) {
+				closingAction();
 			}
 		});
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -126,6 +133,15 @@ public class MemberList extends JFrame {
 	private JTextField getTfMember() {
 		if (tfMember == null) {
 			tfMember = new JTextField();
+			tfMember.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {	// 엔터키 입력시.
+						tableMemberInit();
+						searchMemberAction(); 
+					}
+				}
+			});
 			tfMember.setBounds(198, 20, 239, 21);
 			tfMember.setColumns(10);
 		}
@@ -241,7 +257,12 @@ public class MemberList extends JFrame {
 		return btnPurchase;
 	}
 	// ==================== 아래 메뉴 ================================
-	
+	private void closingAction() {
+		for(int index=0; index < dtoList.size(); index++) {
+			File file = new File("./" + dtoList.get(index).getCustid());
+			file.delete();
+		}
+	}
 	// [상품관리] ===== Function ========================
 	private void tableMemberInit() { //image, custid, custpw, custname, phone, joinactive, deactive
 		// Table Column 명 정하기.
@@ -318,7 +339,7 @@ public class MemberList extends JFrame {
 		String val = tfMember.getText();
 		
 		MemberDAO memberDAO = new MemberDAO();
-		ArrayList<MemberDTO> dtoList = memberDAO.searchMemberAction(item, val);
+		dtoList = memberDAO.searchMemberAction(item, val);
 
 		int listCount = dtoList.size();
 		for(int i=0; i<listCount; i++) {	//custid, custpw, custname, phone, joinactive, deactive
