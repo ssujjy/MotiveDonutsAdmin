@@ -424,7 +424,7 @@ public class ProductList extends JFrame {
 	// 카테고리 가져오기.
 	private void getComboCategory() {
 		ProductDAO prodcutDAO = new ProductDAO();
-		ArrayList<String> listCategory = prodcutDAO.selectItem("");
+		ArrayList<String> listCategory = prodcutDAO.selectItem();
 //		String[] strCategory = new listCategory.get(0);
 		
 		for(int i=0; i<listCategory.size(); i++) {
