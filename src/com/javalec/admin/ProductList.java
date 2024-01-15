@@ -551,7 +551,7 @@ public class ProductList extends JFrame {
 	// =========== 아래버튼 ========================
 	private void tableClick() {
 		int i = innerProductTable.getSelectedRow();
-		ShareVar.proname = (String) innerProductTable.getValueAt(i, 1);	// 테이블에서 상품명 가져오기.
+		ShareVar.proname = (String) innerProductTable.getValueAt(i, 2);	// 테이블에서 상품명 가져오기.
 		gotoUpdateProduct();
 	}
 

@@ -314,6 +314,30 @@ public class ProductDAO {
 	}
 	
 	// ========= [ 상품분류(Category/Item) 관리 ] ========
+	// 상품분류가 있는지 체크 
+	public boolean checkItemAction(String pItem) {
+		boolean chkResult = false;
+		String whereDefault = "SELECT item FROM category";
+		String where = " WHERE item = '"+pItem+"'";
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
+			Statement stmt_mysql = conn_mysql.createStatement();
+			
+			ResultSet rs = stmt_mysql.executeQuery(whereDefault+where);
+			
+			if(rs.next()) {	
+				chkResult = true;
+			}
+			conn_mysql.close();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return chkResult;
+	}
+	
 	// 상품분류 등록.
 	public boolean insertItemAction(String pItem) {
 		PreparedStatement ps = null; 
@@ -361,6 +385,31 @@ public class ProductDAO {
 		}
 		return true;
 	}//updateItemAction
+	
+	// 상품분류가 있는지 체크 
+	public boolean chkExistRegisterAction(String pItem) {
+		boolean chkResult = false;
+		String whereDefault = "SELECT item FROM register";
+		String where = " WHERE item = '"+pItem+"'";
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
+			Statement stmt_mysql = conn_mysql.createStatement();
+			
+			ResultSet rs = stmt_mysql.executeQuery(whereDefault+where);
+			
+			if(rs.next()) {	
+				chkResult = true;
+			}
+			conn_mysql.close();
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return chkResult;
+	}
+		
 	// 상품분류 삭제.
 	public boolean deleteItemAction(String pItem) {
 		PreparedStatement ps = null; 

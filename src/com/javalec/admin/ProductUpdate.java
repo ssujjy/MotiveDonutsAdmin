@@ -58,6 +58,7 @@ public class ProductUpdate extends JFrame {
 	private JLabel lblNewLabel_1_2;
 	private JTextField tfEngName;
 	private JLabel lblNewLabel_1_2_1;
+	private JButton btnBack;
 //	public String proname;
 
 	/**
@@ -140,6 +141,7 @@ public class ProductUpdate extends JFrame {
 			UpdateProduct.add(getLblNewLabel_1_2());
 			UpdateProduct.add(getTfEngName());
 			UpdateProduct.add(getLblNewLabel_1_2_1());
+			UpdateProduct.add(getBtnBack());
 		}
 		return UpdateProduct;
 	}
@@ -292,6 +294,21 @@ public class ProductUpdate extends JFrame {
 		}
 		return lblNewLabel_1_2_1;
 	}
+
+	private JButton getBtnBack() {
+		if (btnBack == null) {
+			btnBack = new JButton("목록으로");
+			btnBack.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoProductList();
+				}
+			});
+			btnBack.setBounds(818, 23, 97, 23);
+		}
+		return btnBack;
+	}
+	
+	
 	// === Function ======
 	// 카테고리 가져오기.
 	private void getComboCategory() {
