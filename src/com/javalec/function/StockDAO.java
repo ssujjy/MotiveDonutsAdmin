@@ -26,9 +26,10 @@ public class StockDAO {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
 			
-			String A = "INSERT INTO sell (stonum, cateitem, proname, sellqty, stockqty selldate)";
+			String A = "INSERT INTO sell (stonum, cateitem, proname, sellqty, stockqty, selldate)";
 			String B = " VALUES ( ?, ?, ?, ?, ?, sysdate())";
-			
+//			System.out.println(A+B);
+//			System.out.println(ShareVar.storeNum+"\n"+pItem+"\n"+pProname+"\n"+pqty);
 			ps = conn_mysql.prepareStatement(A+B);
 			ps.setInt(1, ShareVar.storeNum);
 			ps.setString(2, pItem);
