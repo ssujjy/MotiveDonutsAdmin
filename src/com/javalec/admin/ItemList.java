@@ -62,6 +62,7 @@ public class ItemList extends JFrame {
 	private JRadioButton rbDeleteItem;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JButton btnOK;
+	private JButton btnProductList;
 	/**
 	 * Launch the application.
 	 */
@@ -129,6 +130,7 @@ public class ItemList extends JFrame {
 			tabItem.add(getRbNewItem());
 			tabItem.add(getRbDeleteItem());
 			tabItem.add(getBtnOK());
+			tabItem.add(getBtnProductList_1());
 		}
 		return tabItem;
 	}
@@ -229,15 +231,27 @@ public class ItemList extends JFrame {
 		return btnOK;
 	}
 	//---------------- 아래 버튼 ----------------------------------//
-	private JButton getBtnItem() {
-		if (btnItem == null) {
-			btnItem = new JButton("상품 관리");
-			btnItem.addActionListener(new ActionListener() {
+	private JButton getBtnProductList() {
+		if (btnProductList == null) {
+			btnProductList = new JButton("상품관리");
+			btnProductList.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					gotoProductList();
 				}
 			});
-			btnItem.setBounds(51, 418, 146, 23);
+			btnProductList.setBounds(40, 417, 146, 23);
+		}
+		return btnProductList;
+	}
+	private JButton getBtnItem() {
+		if (btnItem == null) {
+			btnItem = new JButton("상품종류 관리");
+			btnItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					gotoItemList();
+				}
+			});
+			btnItem.setBounds(216, 417, 146, 23);
 		}
 		return btnItem;
 	}
@@ -249,7 +263,7 @@ public class ItemList extends JFrame {
 					gotoStockList();
 				}
 			});
-			btnStock.setBounds(235, 418, 146, 23);
+			btnStock.setBounds(400, 417, 146, 23);
 		}
 		return btnStock;
 	}
@@ -261,7 +275,7 @@ public class ItemList extends JFrame {
 					gotoMemberList();
 				}
 			});
-			btnMember.setBounds(426, 418, 146, 23);
+			btnMember.setBounds(590, 417, 146, 23);
 		}
 		return btnMember;
 	}
@@ -273,7 +287,7 @@ public class ItemList extends JFrame {
 					gotoSalesList();
 				}
 			});
-			btnPurchase.setBounds(618, 418, 146, 23);
+			btnPurchase.setBounds(765, 417, 146, 23);
 		}
 		return btnPurchase;
 	}
@@ -386,23 +400,31 @@ public class ItemList extends JFrame {
 	
 	private void insertItemAction(String item) {
 		ProductDAO dao = new ProductDAO();
-		boolean result = dao.insertItemAction(item);
-		
-		if(result == true) {
-			JOptionPane.showMessageDialog(null,  item + "이 추가 되었습니다.");
+		boolean chkResult = dao.checkItemAction(item);
+		if(chkResult == true) {
+			JOptionPane.showMessageDialog(null,  " 이미 존재하는 상품 분류입니다. ");
 		}else {
-			JOptionPane.showMessageDialog(null, "입력중 문제가 발생했습니다.");
+			boolean result = dao.insertItemAction(item);
+			if(result == true) {
+				JOptionPane.showMessageDialog(null,  item + "이 추가 되었습니다.");
+			}else {
+				JOptionPane.showMessageDialog(null, "입력중 문제가 발생했습니다.");
+			}
 		}
 	}
 	
 	private void deleteItemAction(String item) {
 		ProductDAO dao = new ProductDAO();
-		boolean result = dao.deleteItemAction(item);
-		
-		if(result == true) {
-			JOptionPane.showMessageDialog(null,  item + "이 삭제 되었습니다.");
+		boolean chk = dao.chkExistRegisterAction(item);
+		if(chk == true) {
+			JOptionPane.showMessageDialog(null,  " 상품이 등록된 상품분류는 삭제할 수 없습니다. ");
 		}else {
-			JOptionPane.showMessageDialog(null, "삭제중 문제가 발생했습니다.");
+			boolean result = dao.deleteItemAction(item);
+			if(result == true) {
+				JOptionPane.showMessageDialog(null,  item + "이 삭제 되었습니다.");
+			}else {
+				JOptionPane.showMessageDialog(null, "삭제중 문제가 발생했습니다.");
+			}
 		}
 	}
 	
@@ -437,5 +459,11 @@ public class ItemList extends JFrame {
 		SalesList salesList = new SalesList();
 		salesList.main(null);
 	}
-	// =========== 아래버튼 ========================
+	private JButton getBtnProductList_1() {
+		if (btnProductList == null) {
+			btnProductList = new JButton("상품관리");
+			btnProductList.setBounds(12, 417, 146, 23);
+		}
+		return btnProductList;
+	}
 }
