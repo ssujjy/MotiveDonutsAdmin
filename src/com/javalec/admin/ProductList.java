@@ -38,6 +38,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JLabel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class ProductList extends JFrame {
 
@@ -205,6 +207,15 @@ public class ProductList extends JFrame {
 	private JTextField getTfProduct() {
 		if (tfProduct == null) {
 			tfProduct = new JTextField();
+			tfProduct.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {	// 엔터키 입력시.
+						tableProductInit();
+						searchProductAction(); 
+					}
+				}
+			});
 			tfProduct.setBounds(335, 20, 159, 21);
 			tfProduct.setColumns(10);
 		}
@@ -235,7 +246,7 @@ public class ProductList extends JFrame {
 		if (innerProductTable == null) {
 			innerProductTable = new JTable(){ 								
 				public Class getColumnClass(int column) { 				
-			        return (column == 0) ? Icon.class : Object.class; 	
+			        return (column == 1) ? Icon.class : Object.class; 	
 			      }
 			};
 			innerProductTable.addMouseListener(new MouseAdapter() {
@@ -343,6 +354,7 @@ public class ProductList extends JFrame {
 	// [상품관리] ===== Function ========================
 	private void tableProductInit() { //			proname, sellprice, detail, nutritional, ingredient, image, imagename, wItem
 		// Table Column 명 정하기.
+		outerProductTable.addColumn("No.");
 		outerProductTable.addColumn("이미지");
 		outerProductTable.addColumn("상품명");
 		outerProductTable.addColumn("상품가격");
@@ -351,34 +363,41 @@ public class ProductList extends JFrame {
 //		outerProductTable.addColumn("성분");
 //		outerProductTable.addColumn("이미지이름");
 		outerProductTable.addColumn("분류");
-		outerProductTable.setColumnCount(5);
-		// 이미지
+		outerProductTable.setColumnCount(6);
+		
+		// NO.
 		int colNo = 0;
 		TableColumn col = innerProductTable.getColumnModel().getColumn(colNo);
-		int width = 150;
+		int width = 50;
 		col.setPreferredWidth(width);
 		
-		// 상품명
+		// 이미지
 		colNo = 1;
+		col = innerProductTable.getColumnModel().getColumn(colNo);
+		width = 150;
+		col.setPreferredWidth(width);
+
+		// 상품명
+		colNo = 2;
 		col = innerProductTable.getColumnModel().getColumn(colNo);
 		width = 150;
 		col.setPreferredWidth(width);
 		
 		// 상품가격
-		colNo = 2;
+		colNo = 3;
 		col = innerProductTable.getColumnModel().getColumn(colNo);
 		width = 80;
 		col.setPreferredWidth(width);
 
 		
 		// 설명
-		colNo = 3;
+		colNo = 4;
 		col = innerProductTable.getColumnModel().getColumn(colNo);
 		width = 350;
 		col.setPreferredWidth(width);
 		
 		// 분류
-		colNo = 4;
+		colNo = 5;
 		col = innerProductTable.getColumnModel().getColumn(colNo);
 		width = 50;
 		col.setPreferredWidth(width);
@@ -453,7 +472,8 @@ public class ProductList extends JFrame {
 			Image changeImg = img.getScaledInstance(100,100, Image.SCALE_SMOOTH);
 			ImageIcon changeIcon = new ImageIcon(changeImg);
 			
-			Object[] tmpData = {changeIcon, proname, sellprice, detail, wkItem};
+			int num = i+1;
+			Object[] tmpData = {num,changeIcon, proname, sellprice, detail, wkItem};
 			outerProductTable.addRow(tmpData);
 		}
 		
@@ -469,10 +489,11 @@ public class ProductList extends JFrame {
 		TableColumnModel tcm = innerProductTable.getColumnModel();
 		
 		// 특정 Column(Cell) 가운데 정렬
-		tcm.getColumn(1).setCellRenderer(center);
-		tcm.getColumn(2).setCellRenderer(right);
-		tcm.getColumn(3).setCellRenderer(center);
+		tcm.getColumn(0).setCellRenderer(center);
+		tcm.getColumn(2).setCellRenderer(center);
+		tcm.getColumn(3).setCellRenderer(right);
 		tcm.getColumn(4).setCellRenderer(center);
+		tcm.getColumn(5).setCellRenderer(center);
 		
 	}	// End of searchAction()
 	

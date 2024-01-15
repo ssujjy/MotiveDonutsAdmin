@@ -41,6 +41,8 @@ import javax.swing.JOptionPane;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class StockList extends JFrame {
 
@@ -175,6 +177,15 @@ public class StockList extends JFrame {
 	private JTextField getTfProduct() {
 		if (tfProduct == null) {
 			tfProduct = new JTextField();
+			tfProduct.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {	// 엔터키 입력시.
+						tableProductInit();
+						searchProductAction(); 
+					}
+				}
+			});
 			tfProduct.setBounds(335, 20, 159, 21);
 			tfProduct.setColumns(10);
 		}

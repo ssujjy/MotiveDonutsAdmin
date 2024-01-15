@@ -115,7 +115,11 @@ public class ProductDAO {
 	public ArrayList<String> selectItem(){
 		ArrayList<String> itemList = new ArrayList<String>();
 		String whereDefault = "SELECT item FROM category";
-		
+//		String where = "";
+//		if(val != null && !(val.equals(""))) {
+//			where = " WHERE item like '%"+val+"%'";
+//		}
+//		System.out.println(whereDefault+where);
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection conn_mysql = DriverManager.getConnection(url_mysql, id_mysql, pw_mysql);
